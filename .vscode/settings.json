@@ -1,0 +1,22 @@
+{
+	"typescript.tsdk": "node_modules/typescript/lib",
+	"files.eol": "\n",
+	"[typescript]": {
+		"editor.defaultFormatter": "dbaeumer.vscode-eslint",
+		"editor.formatOnSave": true,
+		"editor.insertSpaces": false
+	},
+	"[typescriptreact]": {
+		"editor.defaultFormatter": "dbaeumer.vscode-eslint",
+		"editor.formatOnSave": true,
+		"editor.insertSpaces": false
+	},
+	"eslint.run": "onType",
+	"eslint.format.enable": true,
+	"luau-lsp.ignoreGlobs": [
+		"**/node_modules/**",
+		"**/include/**",
+		"**/out/**"
+	],
+	"roblox-ts.command.status.show": false,
+}

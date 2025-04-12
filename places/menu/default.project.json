@@ -1,0 +1,85 @@
+{
+	"name": "menu",
+	"globIgnorePaths": [
+		"**/package.json",
+		"**/tsconfig.json"
+	],
+	"tree": {
+		"$className": "DataModel",
+		"ServerStorage": {
+			"$className": "ServerStorage",
+			"common-server": {
+				"$path": "out/common/src/server"
+			},
+            "server": {
+                "$path": "out/menu/src/server"
+            }
+		},
+		"ServerScriptService": {
+			"$className": "ServerScriptService",
+			"server": {
+				"$path": "out/common/src/main.server.luau"
+			}
+		},
+		"ReplicatedStorage": {
+			"$className": "ReplicatedStorage",
+			"rbxts_include": {
+				"$path": "include",
+				"node_modules": {
+					"$className": "Folder",
+					"@rbxts": {
+						"$path": "../../node_modules/@rbxts"
+					},
+					"@flamework": {
+						"$path": "../../node_modules/@flamework"
+					}
+				}
+			},
+			"common-shared": {
+				"$path": "out/common/src/shared"
+			},
+			"common-client": {
+				"$path": "out/common/src/client"
+			},
+            "shared": {
+                "$path": "out/menu/src/shared"
+            },
+            "client": {
+                "$path": "out/menu/src/client"
+            }
+		},
+		"StarterPlayer": {
+			"$className": "StarterPlayer",
+			"StarterPlayerScripts": {
+				"$className": "StarterPlayerScripts",
+				"client": {
+					"$path": "out/common/src/main.client.luau"
+				}
+			}
+		},
+		"Workspace": {
+			"$className": "Workspace",
+			"$properties": {
+				"FilteringEnabled": true
+			}
+		},
+		"HttpService": {
+			"$className": "HttpService",
+			"$properties": {
+				"HttpEnabled": true
+			}
+		},
+		"SoundService": {
+			"$className": "SoundService",
+			"$properties": {
+				"RespectFilteringEnabled": true
+			}
+		},
+		"Players": {
+			"$className": "Players",
+			"$properties": {
+				"CharacterAutoLoads": false
+			}
+		}
+	}
+}

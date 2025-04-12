@@ -1,0 +1,12 @@
+[creator]
+type = "user"
+id = 100079069
+
+[codegen]
+typescript = true
+style = "flat"
+strip_extensions = false
+
+[inputs.assets]
+path = "assets/**/**"
+output_path = "places/common/src/shared/assets"

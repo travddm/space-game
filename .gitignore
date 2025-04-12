@@ -1,0 +1,14 @@
+/node_modules
+/places/*/include
+/places/*/flamework.build
+/places/*/out
+
+*.rbxlx
+*.rbxlx.lock
+*.rbxl
+*.rbxl.lock
+
+*sourcemap.json
+
+.env
+.cookie
