@@ -18,7 +18,10 @@
 		"ServerScriptService": {
 			"$className": "ServerScriptService",
 			"server": {
-				"$path": "out/common/src/main.server.luau"
+				"$className": "Script",
+				"$properties": {
+					"Source": "require(game:GetService(\"ServerStorage\"):WaitForChild(\"server\")).main()"
+				}
 			}
 		},
 		"ReplicatedStorage": {
@@ -53,7 +56,28 @@
 			"StarterPlayerScripts": {
 				"$className": "StarterPlayerScripts",
 				"client": {
-					"$path": "out/common/src/main.client.luau"
+					"$className": "LocalScript",
+					"$properties": {
+						"Source": "require(game:GetService(\"ReplicatedStorage\"):WaitForChild(\"client\")).main()"
+					}
+				},
+				"PlayerModule": {
+					"$className": "ModuleScript",
+					"$properties": {
+						"Source": "--"
+					}
+				},
+				"PlayerScriptsLoader": {
+					"$className": "LocalScript",
+					"$properties": {
+						"Source": "script.Parent:WaitForChild(\"PlayerModule\"):Destroy()\nscript:Destroy()"
+					}
+				},
+				"RbxCharacterSounds": {
+					"$className": "LocalScript",
+					"$properties": {
+						"Source": "script:Destroy()"
+					}
 				}
 			}
 		},
