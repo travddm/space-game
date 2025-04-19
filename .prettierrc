@@ -2,5 +2,9 @@
 	"printWidth": 120,
 	"tabWidth": 4,
 	"trailingComma": "all",
-	"useTabs": true
+	"useTabs": true,
+	"plugins": ["@trivago/prettier-plugin-sort-imports"],
+	"importOrder": ["^@rbxts/services$", "@flamework/(.*)$", "^@rbxts/(.*)$", "^common/(.*)$", "^shared/(.*)$", "^client/(.*)$", "^server/(.*)$", "^[./]"],
+	"importOrderSeparation": true,
+	"importOrderSortSpecifiers": true
 }
