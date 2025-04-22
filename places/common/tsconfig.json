@@ -19,7 +19,7 @@
 
 		// configurable
 		"typeRoots": ["./node_modules/@rbxts", "../../node_modules/@rbxts", "../../node_modules/@flamework", "../../types"],
-		"rootDirs": ["src", "../common/src"],
+		"rootDirs": ["src"],
 		"outDir": "out",
 		"tsBuildInfoFile": "out/tsconfig.tsbuildinfo",
 		"baseUrl": "src",
