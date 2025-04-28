@@ -67,7 +67,8 @@
 			"$className": "Workspace",
 			"$properties": {
 				"FilteringEnabled": true
-			}
+			},
+			"$ignoreUnknownInstances": false
 		},
 		"HttpService": {
 			"$className": "HttpService",
