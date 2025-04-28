@@ -2,11 +2,13 @@ import { InferActionData } from "../action";
 import { addEntity } from "./add-entity";
 import { deleteEntity } from "./delete-entity";
 import { moveEntity } from "./move-entity";
+import { rotateEntity } from "./rotate-entity";
 
 export const actions = {
-	addEntity: addEntity,
-	deleteEntity: deleteEntity,
-	moveEntity: moveEntity,
+	addEntity,
+	deleteEntity,
+	moveEntity,
+	rotateEntity,
 };
 
 export type Actions = typeof actions;

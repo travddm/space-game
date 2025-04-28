@@ -1,7 +1,6 @@
 import { moveBackwardInputAction, moveForwardInputAction, moveLeftInputAction, moveRightInputAction } from "./move";
 import { toggleJabbyInputAction } from "./open-jabby";
-
-export * from "./open-jabby";
+import { rotateInputAction } from "./rotate";
 
 export const inputActions = [
 	toggleJabbyInputAction,
@@ -9,4 +8,5 @@ export const inputActions = [
 	moveBackwardInputAction,
 	moveRightInputAction,
 	moveLeftInputAction,
+	rotateInputAction,
 ];

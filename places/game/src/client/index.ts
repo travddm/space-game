@@ -27,10 +27,12 @@ function temp() {
 		entityId: 0,
 		components: {
 			player: tostring(Players.LocalPlayer.UserId),
-			cframe: CFrame.identity,
+			transform: CFrame.identity,
 			movable: {
 				moveSpeed: 5,
 				moveDirection: Vector3.zero,
+				rotateSpeed: math.rad(360),
+				rotateDirection: Vector3.xAxis,
 			},
 			ship: {
 				name: "Big Gamer",
@@ -42,10 +44,12 @@ function temp() {
 		queueAction("addEntity", {
 			entityId: i + 1,
 			components: {
-				cframe: new CFrame(math.random(-100, 100), 0, math.random(-100, 100)),
+				transform: new CFrame(math.random(-100, 100), 0, math.random(-100, 100)),
 				movable: {
 					moveSpeed: 5,
 					moveDirection: Vector3.zero,
+					rotateSpeed: math.rad(5),
+					rotateDirection: Vector3.xAxis,
 				},
 				ship: {
 					name: `Big Gamer # ${i}`,

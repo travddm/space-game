@@ -4,6 +4,7 @@ export enum InputName {
 	MoveBackward = "Move Backward",
 	MoveLeft = "Move Left",
 	MoveRight = "Move Right",
+	Rotate = "Rotate",
 }
 
 export const defaultInputConfig: InputConfig = {
@@ -12,6 +13,7 @@ export const defaultInputConfig: InputConfig = {
 	[InputName.MoveBackward]: new Set([Enum.KeyCode.S, Enum.KeyCode.Down]),
 	[InputName.MoveLeft]: new Set([Enum.KeyCode.A, Enum.KeyCode.Left]),
 	[InputName.MoveRight]: new Set([Enum.KeyCode.D, Enum.KeyCode.Right]),
+	[InputName.Rotate]: new Set([Enum.UserInputType.MouseMovement]),
 };
 
 export type Input = Enum.KeyCode | Enum.UserInputType;

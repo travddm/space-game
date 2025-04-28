@@ -1,3 +1,5 @@
+import { getAngleBetweenVectors } from "common/shared/util";
+
 import { components } from "../components";
 import { getEntity } from "../entity";
 import { SystemCallbackType, createSystem } from "../system";
@@ -12,6 +14,7 @@ export const moveEntitiesSystem = createSystem({
 	callbacks: {
 		[SystemCallbackType.OnFixedUpdate]: (deltaTime, frame, actions) => {
 			const moveEntityActions = actions.moveEntity;
+			const rotateEntityActions = actions.rotateEntity;
 
 			// apply actions
 			if (moveEntityActions)
@@ -33,15 +36,47 @@ export const moveEntitiesSystem = createSystem({
 					}
 				}
 
+			if (rotateEntityActions)
+				for (const action of rotateEntityActions) {
+					const playerId = action.playerId;
+					const entity = getEntity(action.data.entityId);
+
+					if (entity === undefined) continue;
+
+					const movable = world.get(entity, components.movable);
+
+					if (movable && (playerId === "server" || playerId === world.get(entity, components.player))) {
+						const rotateDirection = action.data.rotateDirection.Unit;
+
+						world.set(entity, components.movable, {
+							...movable,
+							rotateDirection: rotateDirection.FuzzyEq(rotateDirection) ? rotateDirection : Vector3.zero,
+						});
+					}
+				}
+
 			// move the entities
 			for (const [entity, transform, movable] of movableEntities) {
 				const moveDirection = movable.moveDirection;
+				const rotateDirection = movable.rotateDirection;
 
-				if (moveDirection !== Vector3.zero) {
-					const newTransform = transform.add(movable.moveDirection.mul(movable.moveSpeed).mul(deltaTime));
+				let newTransform = transform;
 
-					if (!transform.FuzzyEq(newTransform)) world.set(entity, components.transform, newTransform);
+				if (moveDirection !== Vector3.zero)
+					newTransform = newTransform.add(movable.moveDirection.mul(movable.moveSpeed).mul(deltaTime));
+
+				if (rotateDirection !== Vector3.zero) {
+					const theta = getAngleBetweenVectors(newTransform.LookVector, rotateDirection);
+
+					if (theta > 0) {
+						const rotateCFrame = CFrame.lookAt(Vector3.zero, rotateDirection);
+						const alpha = math.min(movable.rotateSpeed * deltaTime, theta) / theta;
+
+						newTransform = newTransform.Rotation.Lerp(rotateCFrame, alpha).add(newTransform.Position);
+					}
 				}
+
+				if (!transform.FuzzyEq(newTransform)) world.set(entity, components.transform, newTransform);
 			}
 		},
 	},
