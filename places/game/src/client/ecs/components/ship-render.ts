@@ -4,8 +4,8 @@ import { world } from "shared/ecs";
 
 export interface ShipRender {
 	readonly model: BasePart;
-	readonly currentCFrame: CFrame;
-	readonly previousCFrame: CFrame;
+	readonly currentTransform: CFrame;
+	readonly previousTransform: CFrame;
 }
 
 export const shipRenderComponent = world.component<ShipRender>();

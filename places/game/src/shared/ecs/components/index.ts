@@ -2,11 +2,11 @@ import { Entity, InferComponent } from "@rbxts/jecs";
 
 import { movableComponent } from "./movable";
 import { playerComponent } from "./player";
-import { cframeComponent } from "./position";
 import { shipComponent } from "./ship";
+import { transformComponent } from "./transform";
 
 export const components = {
-	cframe: cframeComponent,
+	transform: transformComponent,
 	movable: movableComponent,
 	player: playerComponent,
 	ship: shipComponent,

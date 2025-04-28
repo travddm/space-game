@@ -4,7 +4,7 @@ import { SystemCallbackType, createSystem } from "../system";
 import { world } from "../world";
 import { deleteEntitiesSystem } from "./delete-entities";
 
-const movableEntities = world.query(components.cframe, components.movable).cached();
+const movableEntities = world.query(components.transform, components.movable).cached();
 
 export const moveEntitiesSystem = createSystem({
 	name: "move-entities",
@@ -34,13 +34,13 @@ export const moveEntitiesSystem = createSystem({
 				}
 
 			// move the entities
-			for (const [entity, cframe, movable] of movableEntities) {
+			for (const [entity, transform, movable] of movableEntities) {
 				const moveDirection = movable.moveDirection;
 
 				if (moveDirection !== Vector3.zero) {
-					const newCFrame = cframe.add(movable.moveDirection.mul(movable.maxSpeed).mul(deltaTime));
+					const newTransform = transform.add(movable.moveDirection.mul(movable.maxSpeed).mul(deltaTime));
 
-					if (!cframe.FuzzyEq(newCFrame)) world.set(entity, components.cframe, newCFrame);
+					if (!transform.FuzzyEq(newTransform)) world.set(entity, components.transform, newTransform);
 				}
 			}
 		},

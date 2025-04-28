@@ -9,7 +9,7 @@ import { clientComponents } from "../components";
 import { shipContainer } from "../containers";
 
 const shipMonitor = monitor(components.ship);
-const movableShips = world.query(components.cframe, clientComponents.shipRender).with(components.ship).cached();
+const movableShips = world.query(components.transform, clientComponents.shipRender).with(components.ship).cached();
 
 const shipModels = new Map<Entity, BasePart>();
 
@@ -29,9 +29,9 @@ export const renderShipsSystem = createSystem({
 
 			// add ships
 			for (const entity of shipMonitor.added()) {
-				const [ship, cframe] = world.get(entity, components.ship, components.cframe);
+				const [ship, transform] = world.get(entity, components.ship, components.transform);
 
-				if (ship && cframe) {
+				if (ship && transform) {
 					const model = new Instance("Part");
 					model.Name = ship?.name;
 					model.Anchored = true;
@@ -39,13 +39,13 @@ export const renderShipsSystem = createSystem({
 					model.CanTouch = false;
 					model.CanQuery = false;
 					model.Size = Vector3.one;
-					model.CFrame = cframe;
+					model.CFrame = transform;
 					model.Parent = shipContainer;
 
 					world.set(entity, clientComponents.shipRender, {
 						model: model,
-						currentCFrame: cframe,
-						previousCFrame: cframe,
+						currentTransform: transform,
+						previousTransform: transform,
 					});
 
 					shipModels.set(entity, model);
@@ -63,24 +63,24 @@ export const renderShipsSystem = createSystem({
 			}
 
 			// update ships
-			for (const [entity, cframe, shipRender] of movableShips) {
+			for (const [entity, transform, shipRender] of movableShips) {
 				let newShipRender = shipRender;
 
 				if (newShipRender) {
 					if (
 						isNewFrame &&
-						(newShipRender.currentCFrame !== cframe || newShipRender.previousCFrame !== cframe)
+						(newShipRender.currentTransform !== transform || newShipRender.previousTransform !== transform)
 					) {
 						newShipRender = {
 							...newShipRender,
-							currentCFrame: cframe,
-							previousCFrame: newShipRender.currentCFrame,
+							currentTransform: transform,
+							previousTransform: newShipRender.currentTransform,
 						};
 
 						world.set(entity, clientComponents.shipRender, newShipRender);
-					} else if (newShipRender.currentCFrame === newShipRender.previousCFrame) continue;
+					} else if (newShipRender.currentTransform === newShipRender.previousTransform) continue;
 
-					const renderCFrame = newShipRender.previousCFrame.Lerp(newShipRender.currentCFrame, blend);
+					const renderCFrame = newShipRender.previousTransform.Lerp(newShipRender.currentTransform, blend);
 
 					bulkMoveToParts.push(newShipRender.model);
 					bulkMoveToCFrames.push(renderCFrame);
