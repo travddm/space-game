@@ -1,5 +1,7 @@
 import { Workspace } from "@rbxts/services";
 
+import { Entity } from "@rbxts/jecs";
+
 import { SystemCallbackType, components, createSystem, world } from "shared/ecs";
 import { monitor } from "shared/ecs/monitor";
 
@@ -8,6 +10,8 @@ import { shipContainer } from "../containers";
 
 const shipMonitor = monitor(components.ship);
 const movableShips = world.query(components.cframe, clientComponents.shipRender).with(components.ship).cached();
+
+const shipModels = new Map<Entity, BasePart>();
 
 const bulkMoveToParts = new Array<BasePart>();
 const bulkMoveToCFrames = new Array<CFrame>();
@@ -43,12 +47,20 @@ export const renderShipsSystem = createSystem({
 						currentCFrame: cframe,
 						previousCFrame: cframe,
 					});
+
+					shipModels.set(entity, model);
 				}
 			}
 
 			// remove ships
-			for (const entity of shipMonitor.removed())
-				if (world.contains(entity)) world.remove(entity, clientComponents.shipRender);
+			for (const entity of shipMonitor.removed()) {
+				const shipModel = shipModels.get(entity);
+
+				if (shipModel) {
+					shipModels.delete(entity);
+					shipModel.Destroy();
+				}
+			}
 
 			// update ships
 			for (const [entity, cframe, shipRender] of movableShips) {
