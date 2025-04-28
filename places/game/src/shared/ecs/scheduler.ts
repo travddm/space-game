@@ -7,7 +7,7 @@ import { actionQueue } from "./action-queue";
 import { System, SystemCallback, SystemCallbackType } from "./system";
 import { world } from "./world";
 
-const FIXED_DELTA = 1 / 10;
+const FIXED_DELTA = 1 / 30;
 const MAX_DELTA = 1 / 5;
 
 type RegisteredSystem<T extends SystemCallbackType> = {
