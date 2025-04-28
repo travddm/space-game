@@ -38,7 +38,7 @@ export const moveEntitiesSystem = createSystem({
 				const moveDirection = movable.moveDirection;
 
 				if (moveDirection !== Vector3.zero) {
-					const newTransform = transform.add(movable.moveDirection.mul(movable.maxSpeed).mul(deltaTime));
+					const newTransform = transform.add(movable.moveDirection.mul(movable.moveSpeed).mul(deltaTime));
 
 					if (!transform.FuzzyEq(newTransform)) world.set(entity, components.transform, newTransform);
 				}

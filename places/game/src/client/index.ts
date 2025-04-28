@@ -29,7 +29,7 @@ function temp() {
 			player: tostring(Players.LocalPlayer.UserId),
 			cframe: CFrame.identity,
 			movable: {
-				maxSpeed: 5,
+				moveSpeed: 5,
 				moveDirection: Vector3.zero,
 			},
 			ship: {
@@ -44,7 +44,7 @@ function temp() {
 			components: {
 				cframe: new CFrame(math.random(-100, 100), 0, math.random(-100, 100)),
 				movable: {
-					maxSpeed: 5,
+					moveSpeed: 5,
 					moveDirection: Vector3.zero,
 				},
 				ship: {

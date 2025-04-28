@@ -4,7 +4,7 @@ import { Name } from "@rbxts/jecs";
 import { world } from "../world";
 
 export interface Movable {
-	readonly maxSpeed: DataType.u16;
+	readonly moveSpeed: DataType.u16;
 	readonly moveDirection: Vector3;
 }
 
