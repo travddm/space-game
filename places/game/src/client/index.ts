@@ -31,7 +31,7 @@ function temp() {
 			movable: {
 				moveSpeed: 5,
 				moveDirection: Vector3.zero,
-				rotateSpeed: math.rad(360),
+				rotateSpeed: math.rad(540),
 				rotateDirection: Vector3.xAxis,
 			},
 			ship: {
