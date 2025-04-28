@@ -3,6 +3,7 @@ import { Name } from "@rbxts/jecs";
 import { world } from "shared/ecs";
 
 export interface ShipRender {
+	readonly model: BasePart;
 	readonly currentCFrame: CFrame;
 	readonly previousCFrame: CFrame;
 }
