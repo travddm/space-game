@@ -30,7 +30,7 @@ function updateRotateDirection() {
 			if (entityId !== undefined)
 				queueAction("rotateEntity", {
 					entityId,
-					rotateDirection: shipRender.model.Position.sub(targetPosition).Unit,
+					rotateDirection: targetPosition.sub(shipRender.model.Position).Unit,
 				});
 		}
 	});
