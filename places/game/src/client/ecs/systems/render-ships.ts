@@ -38,7 +38,8 @@ export const renderShipsSystem = createSystem({
 					model.CanCollide = false;
 					model.CanTouch = false;
 					model.CanQuery = false;
-					model.Size = Vector3.one;
+					model.Material = Enum.Material.DiamondPlate;
+					model.Size = new Vector3(0.5, 0.5, 1);
 					model.CFrame = transform;
 					model.Parent = shipContainer;
 
