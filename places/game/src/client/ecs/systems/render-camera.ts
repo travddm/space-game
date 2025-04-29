@@ -26,6 +26,8 @@ export const renderCameraSystem = createSystem({
 					shipPosition,
 					Vector3.zAxis.mul(-1),
 				);
+
+				if (camera.CameraType !== Enum.CameraType.Scriptable) camera.CameraType = Enum.CameraType.Scriptable;
 			}
 		},
 	},
