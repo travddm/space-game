@@ -57,13 +57,12 @@ export const moveEntitiesSystem = createSystem({
 
 			// move the entities
 			for (const [entity, transform, movable] of movableEntities) {
+				const moveSpeed = movable.moveSpeed;
 				const moveDirection = movable.moveDirection;
+				const moveVelocity = movable.moveVelocity;
 				const rotateDirection = movable.rotateDirection;
 
 				let newTransform = transform;
-
-				if (moveDirection !== Vector3.zero)
-					newTransform = newTransform.add(movable.moveDirection.mul(movable.moveSpeed).mul(deltaTime));
 
 				if (rotateDirection !== Vector3.zero) {
 					const theta = getAngleBetweenVectors(newTransform.LookVector, rotateDirection);
@@ -74,6 +73,40 @@ export const moveEntitiesSystem = createSystem({
 
 						newTransform = newTransform.Rotation.Lerp(rotateCFrame, alpha).add(newTransform.Position);
 					}
+				}
+
+				if (moveVelocity !== Vector3.zero || moveDirection !== Vector3.zero) {
+					const accelSpeed = moveSpeed * deltaTime;
+
+					let newMoveVelocity;
+
+					if (moveDirection !== Vector3.zero) {
+						const acceleration = newTransform
+							.VectorToWorldSpace(
+								new Vector3(
+									moveDirection.X,
+									0,
+									moveDirection.Z > 0 ? moveDirection.Z / 2 : moveDirection.Z * 2,
+								),
+							)
+							.mul(accelSpeed);
+
+						newMoveVelocity = moveVelocity.add(acceleration);
+
+						if (newMoveVelocity.Magnitude > moveSpeed)
+							newMoveVelocity = newMoveVelocity.Unit.mul(moveSpeed);
+					} else if (moveVelocity.Magnitude > accelSpeed) {
+						newMoveVelocity = moveVelocity.sub(moveVelocity.Unit.mul(accelSpeed));
+					} else newMoveVelocity = Vector3.zero;
+
+					if (!moveVelocity.FuzzyEq(newMoveVelocity))
+						world.set(entity, components.movable, {
+							...movable,
+							moveVelocity: newMoveVelocity,
+						});
+
+					if (newMoveVelocity !== Vector3.zero)
+						newTransform = newTransform.add(newMoveVelocity.mul(deltaTime));
 				}
 
 				if (!transform.FuzzyEq(newTransform)) world.set(entity, components.transform, newTransform);

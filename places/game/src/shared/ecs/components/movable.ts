@@ -5,6 +5,7 @@ import { world } from "../world";
 export interface Movable {
 	readonly moveSpeed: number;
 	readonly moveDirection: Vector3;
+	readonly moveVelocity: Vector3;
 	readonly rotateSpeed: number;
 	readonly rotateDirection: Vector3;
 }

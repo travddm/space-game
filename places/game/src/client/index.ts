@@ -29,8 +29,9 @@ function temp() {
 			player: tostring(Players.LocalPlayer.UserId),
 			transform: CFrame.identity,
 			movable: {
-				moveSpeed: 5,
+				moveSpeed: 10,
 				moveDirection: Vector3.zero,
+				moveVelocity: Vector3.zero,
 				rotateSpeed: math.rad(540),
 				rotateDirection: Vector3.xAxis,
 			},
@@ -48,6 +49,7 @@ function temp() {
 				movable: {
 					moveSpeed: 5,
 					moveDirection: Vector3.zero,
+					moveVelocity: Vector3.zero,
 					rotateSpeed: math.rad(5),
 					rotateDirection: Vector3.xAxis,
 				},
