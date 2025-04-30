@@ -6,7 +6,12 @@ export let closeJabby: (() => void) | undefined;
 
 export function toggleJabby() {
 	if (closeJabby !== undefined) {
-		closeJabby();
+		const [success] = pcall(closeJabby);
+
 		closeJabby = undefined;
-	} else closeJabby = client.spawn_app(client.apps.home);
+
+		if (success) return;
+	}
+
+	closeJabby = client.spawn_app(client.apps.home);
 }
