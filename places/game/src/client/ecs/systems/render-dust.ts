@@ -24,13 +24,14 @@ adornee.Parent = vfxContainer;
 
 const dustParticles = new Array<SphereHandleAdornment>();
 
-let time = 0;
+// ensure dust visual noise doesn't start at <1
+let dustTime = 1 / DUST_VISUAL_SPEED;
 
 export const renderDustSystem = createSystem({
 	name: "render-dust",
 	callbacks: {
 		[SystemCallbackType.OnRender]: (deltaTime, frame, blend) => {
-			time += deltaTime;
+			dustTime += deltaTime;
 
 			const camera = Workspace.CurrentCamera;
 
@@ -46,23 +47,31 @@ export const renderDustSystem = createSystem({
 					rayBottomRight.Direction,
 				);
 
-				const minX = math.floor(math.min(boundTopLeft.X, boundBottomRight.X) / DUST_SPACING) * DUST_SPACING;
-				const minZ = math.floor(math.min(boundTopLeft.Z, boundBottomRight.Z) / DUST_SPACING) * DUST_SPACING;
-				const maxX = math.ceil(math.max(boundTopLeft.X, boundBottomRight.X) / DUST_SPACING) * DUST_SPACING;
-				const maxZ = math.ceil(math.max(boundTopLeft.Z, boundBottomRight.Z) / DUST_SPACING) * DUST_SPACING;
-
-				const dustOffset = time * DUST_SPEED;
+				const dustOffset = dustTime * DUST_SPEED;
 				const dustOffsetFloor = math.floor(dustOffset / DUST_SPACING) * DUST_SPACING;
-				const dustVisual = time * DUST_VISUAL_SPEED;
+				const dustVisual = dustTime * DUST_VISUAL_SPEED;
+
+				const minX =
+					math.floor(math.min(boundTopLeft.X, boundBottomRight.X) / DUST_SPACING) * DUST_SPACING -
+					dustOffsetFloor;
+				const minZ =
+					math.floor(math.min(boundTopLeft.Z, boundBottomRight.Z) / DUST_SPACING) * DUST_SPACING -
+					dustOffsetFloor;
+				const maxX =
+					math.ceil(math.max(boundTopLeft.X, boundBottomRight.X) / DUST_SPACING) * DUST_SPACING -
+					dustOffsetFloor;
+				const maxZ =
+					math.ceil(math.max(boundTopLeft.Z, boundBottomRight.Z) / DUST_SPACING) * DUST_SPACING -
+					dustOffsetFloor;
 
 				let dustCounter = 0;
 
-				for (let x = minX - dustOffsetFloor; x <= maxX - dustOffsetFloor; x += DUST_SPACING) {
-					for (let z = minZ - dustOffsetFloor; z <= maxZ - dustOffsetFloor; z += DUST_SPACING) {
+				for (let x = minX; x <= maxX; x += DUST_SPACING) {
+					for (let z = minZ; z <= maxZ; z += DUST_SPACING) {
 						const xn = x * math.pi;
 						const zn = z * math.pi;
 
-						if (math.noise(xn, zn) < 0.5) continue;
+						if (math.noise(xn, zn) > -0.5) continue;
 
 						const transparency = (math.noise(xn, zn, dustVisual) + 1) / 2;
 						const height = (math.noise(zn, xn, dustVisual) + 1) * 0.5 * DUST_DEPTH;
@@ -80,8 +89,7 @@ export const renderDustSystem = createSystem({
 							dustParticles.push(particle);
 						}
 
-						if (particle.Transparency !== transparency) particle.Transparency = transparency;
-
+						particle.Transparency = transparency;
 						particle.CFrame = new CFrame(x + dustOffset, height - DUST_DEPTH, z + dustOffset);
 
 						dustCounter++;
