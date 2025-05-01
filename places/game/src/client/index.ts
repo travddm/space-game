@@ -40,22 +40,4 @@ function temp() {
 			},
 		},
 	});
-
-	for (let i = 0; i < 100; i++)
-		queueAction("addEntity", {
-			entityId: i + 1,
-			components: {
-				transform: new CFrame(math.random(-100, 100), 0, math.random(-100, 100)),
-				movable: {
-					moveSpeed: 5,
-					moveDirection: Vector3.zero,
-					moveVelocity: Vector3.zero,
-					rotateSpeed: math.rad(5),
-					rotateDirection: Vector3.xAxis,
-				},
-				ship: {
-					name: `Big Gamer # ${i}`,
-				},
-			},
-		});
 }
