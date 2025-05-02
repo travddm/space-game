@@ -65,27 +65,26 @@ export const renderShipsSystem = createSystem({
 
 			// update ships
 			for (const [entity, transform, shipRender] of movableShips) {
-				let newShipRender = shipRender;
+				const model = shipRender.model;
 
-				if (newShipRender) {
-					if (
-						isNewFrame &&
-						(newShipRender.currentTransform !== transform || newShipRender.previousTransform !== transform)
-					) {
-						newShipRender = {
-							...newShipRender,
-							currentTransform: transform,
-							previousTransform: newShipRender.currentTransform,
-						};
+				let currentTransform = shipRender.currentTransform;
+				let previousTransform = shipRender.previousTransform;
 
-						world.set(entity, clientComponents.shipRender, newShipRender);
-					} else if (newShipRender.currentTransform === newShipRender.previousTransform) continue;
+				if (isNewFrame && (currentTransform !== transform || previousTransform !== transform)) {
+					currentTransform = transform;
+					previousTransform = shipRender.currentTransform;
 
-					const renderCFrame = newShipRender.previousTransform.Lerp(newShipRender.currentTransform, blend);
+					world.set(entity, clientComponents.shipRender, {
+						model,
+						currentTransform,
+						previousTransform,
+					});
+				} else if (currentTransform === previousTransform) continue;
 
-					bulkMoveToParts.push(newShipRender.model);
-					bulkMoveToCFrames.push(renderCFrame);
-				}
+				const renderCFrame = previousTransform.Lerp(currentTransform, blend);
+
+				bulkMoveToParts.push(model);
+				bulkMoveToCFrames.push(renderCFrame);
 			}
 
 			if (bulkMoveToParts.size() > 0)
