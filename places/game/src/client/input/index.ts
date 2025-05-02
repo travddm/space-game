@@ -49,5 +49,7 @@ export function flushInputHandler() {
 		const buffer = mappedInput.buffer;
 
 		if (buffer.size() > 0) for (const callback of mappedInput.callbacks) callback(buffer);
+
+		buffer.clear();
 	}
 }
