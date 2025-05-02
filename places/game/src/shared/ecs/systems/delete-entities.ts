@@ -1,4 +1,3 @@
-import { components } from "../components";
 import { getEntity } from "../entity";
 import { SystemCallbackType, createSystem } from "../system";
 import { world } from "../world";
