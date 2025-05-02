@@ -1,4 +1,4 @@
-import { getAngleBetweenVectors } from "common/shared/util";
+import { getAngleBetweenVectors, rotateVectorY } from "common/shared/util";
 
 import { components } from "../components";
 import { getEntity } from "../entity";
@@ -46,11 +46,9 @@ export const moveEntitiesSystem = createSystem({
 					const movable = world.get(entity, components.movable);
 
 					if (movable && (playerId === "server" || playerId === world.get(entity, components.player))) {
-						const rotateDirection = action.data.rotateDirection.Unit;
-
 						world.set(entity, components.movable, {
 							...movable,
-							rotateDirection: rotateDirection.FuzzyEq(rotateDirection) ? rotateDirection : Vector3.zero,
+							rotateDirection: rotateVectorY(movable.rotateDirection, action.data.rotation),
 						});
 					}
 				}

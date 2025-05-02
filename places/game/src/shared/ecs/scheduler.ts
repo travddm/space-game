@@ -3,7 +3,7 @@ import { RunService } from "@rbxts/services";
 import jabby from "@rbxts/jabby";
 import { Scheduler, SystemId } from "@rbxts/jabby/out/jabby/modules/types";
 
-import { actionQueue } from "./action-queue";
+import { ActionQueue, actionQueue } from "./action-queue";
 import { System, SystemCallback, SystemCallbackType } from "./system";
 import { world } from "./world";
 
@@ -130,7 +130,7 @@ function registerSystems(scheduler: Scheduler, systems: System[]) {
 	};
 }
 
-export function startScheduler(systems: System[]) {
+export function startScheduler(systems: System[], flushInput?: Callback) {
 	const scheduler = jabby.scheduler.create();
 	const registeredSystems = registerSystems(scheduler, systems);
 
@@ -170,7 +170,12 @@ export function startScheduler(systems: System[]) {
 		for (let frameStep = 1; frameStep <= frameSteps; frameStep++) {
 			const frameCurrent = framePrevious + frameStep;
 			const isBehind = frameCurrent < frame;
-			const actions = isBehind ? {} : actionQueue;
+			let actions: ActionQueue;
+
+			if (flushInput && !isBehind) {
+				flushInput();
+				actions = actionQueue;
+			} else actions = {};
 
 			for (const system of registeredSystems[SystemCallbackType.OnFixedUpdate])
 				scheduler.run(system.id, system.callback, FIXED_DELTA, frameCurrent, actions);

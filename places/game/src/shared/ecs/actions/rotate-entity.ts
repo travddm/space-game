@@ -1,7 +1,7 @@
 import { EntityAction, createAction } from "../action";
 
 export interface RotateEntity extends EntityAction {
-	readonly rotateDirection: Vector3;
+	readonly rotation: number;
 }
 
 export const rotateEntity = createAction<RotateEntity>();

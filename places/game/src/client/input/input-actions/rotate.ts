@@ -1,6 +1,6 @@
-import { RunService, Workspace } from "@rbxts/services";
+import { Workspace } from "@rbxts/services";
 
-import { getIntersectionY } from "common/shared/util";
+import { getAngleDifferenceY, getIntersectionY } from "common/shared/util";
 
 import { components, getEntityId, queueAction, world } from "shared/ecs";
 import { InputName } from "shared/input";
@@ -10,42 +10,34 @@ import { clientComponents } from "client/ecs";
 import { createInputAction } from "../input-action";
 
 const localShipEntities = world
-	.query(clientComponents.shipRender)
+	.query(components.movable, clientComponents.shipRender)
 	.with(clientComponents.local, components.ship)
 	.cached();
 
-let targetPosition = Vector3.zero;
-
-let connection: RBXScriptConnection | undefined;
-
-function updateRotateDirection() {
-	if (connection) return;
-
-	connection = RunService.PreRender.Once(() => {
-		connection = undefined;
-
-		for (const [entity, shipRender] of localShipEntities) {
-			const entityId = getEntityId(entity);
-
-			if (entityId !== undefined)
-				queueAction("rotateEntity", {
-					entityId,
-					rotateDirection: targetPosition.sub(shipRender.model.Position).Unit,
-				});
-		}
-	});
-}
-
-export const rotateInputAction = createInputAction(InputName.Rotate, (input) => {
+export const rotateInputAction = createInputAction(InputName.Rotate, (inputs) => {
 	const camera = Workspace.CurrentCamera;
+	const lastInput = inputs[inputs.size() - 1];
 
 	if (camera) {
-		const inputPosition = input.Position;
-
+		const inputPosition = lastInput.Position;
 		const ray = camera.ScreenPointToRay(inputPosition.X, inputPosition.Y);
+		const targetPosition = getIntersectionY(ray.Origin, ray.Direction);
 
-		targetPosition = getIntersectionY(ray.Origin, ray.Direction);
+		for (const [entity, movable, shipRender] of localShipEntities) {
+			const entityId = getEntityId(entity);
 
-		updateRotateDirection();
+			if (entityId !== undefined) {
+				const lookVector = movable.rotateDirection;
+				const targetLookVector = targetPosition.sub(shipRender.model.Position).Unit;
+
+				const angle = getAngleDifferenceY(lookVector, targetLookVector);
+
+				if (math.abs(angle) > 0)
+					queueAction("rotateEntity", {
+						entityId,
+						rotation: angle,
+					});
+			}
+		}
 	}
 });

@@ -7,30 +7,47 @@ import { inputActions } from "./input-actions";
 
 export * from "./input-actions";
 
-export function startInputHandler() {
-	const inputMap = new Map<Input, InputActionCallback[]>();
+type MappedInput = {
+	callbacks: InputActionCallback[];
+	buffer: InputObject[];
+};
 
+const inputMap = new Map<Input, MappedInput>();
+
+export function startInputHandler() {
 	for (const inputAction of inputActions) {
 		const inputs = defaultInputConfig[inputAction.inputName];
 		const callback = inputAction.callback;
 
 		for (const input of inputs) {
-			const callbacks = inputMap.get(input);
+			const mappedInput = inputMap.get(input);
 
-			if (callbacks) callbacks.push(callback);
-			else inputMap.set(input, [callback]);
+			if (mappedInput) mappedInput.callbacks.push(callback);
+			else
+				inputMap.set(input, {
+					callbacks: [callback],
+					buffer: [],
+				});
 		}
 	}
 
-	function handleInput(inputObject: InputObject, gameProcessed: boolean) {
+	function bufferInput(inputObject: InputObject, gameProcessed: boolean) {
 		if (gameProcessed) return;
 
-		const callbacks = inputMap.get(inputObject.UserInputType) ?? inputMap.get(inputObject.KeyCode);
+		const mappedInput = inputMap.get(inputObject.UserInputType) ?? inputMap.get(inputObject.KeyCode);
 
-		if (callbacks) for (const callback of callbacks) callback(inputObject);
+		if (mappedInput) mappedInput.buffer.push(inputObject);
 	}
 
-	UserInputService.InputBegan.Connect(handleInput);
-	UserInputService.InputChanged.Connect(handleInput);
-	UserInputService.InputEnded.Connect(handleInput);
+	UserInputService.InputBegan.Connect(bufferInput);
+	UserInputService.InputChanged.Connect(bufferInput);
+	UserInputService.InputEnded.Connect(bufferInput);
+}
+
+export function flushInputHandler() {
+	for (const [_, mappedInput] of inputMap) {
+		const buffer = mappedInput.buffer;
+
+		if (buffer.size() > 0) for (const callback of mappedInput.callbacks) callback(buffer);
+	}
 }

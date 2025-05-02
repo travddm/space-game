@@ -5,12 +5,12 @@ import { log } from "common/shared/log";
 import { queueAction, startScheduler } from "shared/ecs";
 
 import { clientSystems } from "./ecs";
-import { startInputHandler } from "./input";
+import { flushInputHandler, startInputHandler } from "./input";
 
 export function main() {
 	log.info("Started initializing client");
 
-	startScheduler(clientSystems);
+	startScheduler(clientSystems, flushInputHandler);
 	startInputHandler();
 
 	log.info("Finished initializing client");
@@ -29,7 +29,7 @@ function temp() {
 			player: tostring(Players.LocalPlayer.UserId),
 			transform: CFrame.identity,
 			movable: {
-				moveSpeed: 10,
+				moveSpeed: 30,
 				moveDirection: Vector3.zero,
 				moveVelocity: Vector3.zero,
 				rotateSpeed: math.rad(540),

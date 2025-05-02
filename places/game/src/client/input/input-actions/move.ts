@@ -40,29 +40,37 @@ function updateMovementDirection() {
 	});
 }
 
-export const moveForwardInputAction = createInputAction(InputName.MoveForward, (input) => {
-	if (input.UserInputState === Enum.UserInputState.Begin) directionsPressed.forward = true;
+export const moveForwardInputAction = createInputAction(InputName.MoveForward, (inputs) => {
+	const lastInput = inputs[inputs.size() - 1];
+
+	if (lastInput.UserInputState === Enum.UserInputState.Begin) directionsPressed.forward = true;
 	else directionsPressed.forward = false;
 
 	updateMovementDirection();
 });
 
-export const moveBackwardInputAction = createInputAction(InputName.MoveBackward, (input) => {
-	if (input.UserInputState === Enum.UserInputState.Begin) directionsPressed.backward = true;
+export const moveBackwardInputAction = createInputAction(InputName.MoveBackward, (inputs) => {
+	const lastInput = inputs[inputs.size() - 1];
+
+	if (lastInput.UserInputState === Enum.UserInputState.Begin) directionsPressed.backward = true;
 	else directionsPressed.backward = false;
 
 	updateMovementDirection();
 });
 
-export const moveLeftInputAction = createInputAction(InputName.MoveLeft, (input) => {
-	if (input.UserInputState === Enum.UserInputState.Begin) directionsPressed.left = true;
+export const moveLeftInputAction = createInputAction(InputName.MoveLeft, (inputs) => {
+	const lastInput = inputs[inputs.size() - 1];
+
+	if (lastInput.UserInputState === Enum.UserInputState.Begin) directionsPressed.left = true;
 	else directionsPressed.left = false;
 
 	updateMovementDirection();
 });
 
-export const moveRightInputAction = createInputAction(InputName.MoveRight, (input) => {
-	if (input.UserInputState === Enum.UserInputState.Begin) directionsPressed.right = true;
+export const moveRightInputAction = createInputAction(InputName.MoveRight, (inputs) => {
+	const lastInput = inputs[inputs.size() - 1];
+
+	if (lastInput.UserInputState === Enum.UserInputState.Begin) directionsPressed.right = true;
 	else directionsPressed.right = false;
 
 	updateMovementDirection();

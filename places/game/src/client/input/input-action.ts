@@ -1,7 +1,7 @@
 import { InputName } from "shared/input";
 
 export interface InputActionCallback {
-	(inputObject: InputObject): void;
+	(inputs: InputObject[]): void;
 }
 
 export interface InputAction {
