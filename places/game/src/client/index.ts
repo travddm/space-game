@@ -2,15 +2,21 @@ import { Players } from "@rbxts/services";
 
 import { log } from "common/shared/log";
 
-import { queueAction, startScheduler } from "shared/ecs";
+import { fixedTimeStep, maxTimeStep } from "shared/constants";
+import { queueAction } from "shared/ecs";
 
-import { clientSystems } from "./ecs";
+import { clientSystems, startScheduler } from "./ecs";
 import { flushInputHandler, startInputHandler } from "./input";
 
 export function main() {
 	log.info("Started initializing client");
 
-	startScheduler(clientSystems, flushInputHandler);
+	startScheduler({
+		fixedTimeStep,
+		maxTimeStep,
+		systems: clientSystems,
+		flushInput: flushInputHandler,
+	});
 	startInputHandler();
 
 	log.info("Finished initializing client");
