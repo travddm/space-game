@@ -1,29 +1,19 @@
 import { RunService } from "@rbxts/services";
 
-import jabby from "@rbxts/jabby";
-
-import { ActionQueue, SchedulerConfig, SystemCallbackType, actionQueue, registerSystems, world } from "shared/ecs";
+import {
+	ActionQueue,
+	SchedulerConfig,
+	SystemCallbackType,
+	actionQueue,
+	getScheduler,
+	registerSystems,
+} from "shared/ecs";
 
 export function startScheduler(config: SchedulerConfig) {
-	const scheduler = jabby.scheduler.create();
+	const scheduler = getScheduler();
 	const registeredSystems = registerSystems(scheduler, config.systems);
 	const timeStep = config.fixedTimeStep;
 	const maxTimeStep = config.maxTimeStep;
-
-	jabby.register({
-		applet: jabby.applets.world,
-		name: "all",
-		configuration: {
-			world,
-		},
-	});
-	jabby.register({
-		applet: jabby.applets.scheduler,
-		name: "all",
-		configuration: {
-			scheduler,
-		},
-	});
 
 	let frame = 0;
 	let accumulator = 0;
