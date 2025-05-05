@@ -4,33 +4,49 @@ import { AnyActionData } from "./ecs/actions";
 import { AnyComponentData } from "./ecs/components";
 
 /**
- * Represents the server entity's state at the beginning of the given frame number.
+ * Represents the server entity's state at the beginning of the frame.
  */
 export interface SerializableEntity {
 	/** The server entity's id. */
-	readonly id: DataType.i32;
+	readonly id: number;
 	/** A list of all component data on the entity. */
-	readonly components?: Array<AnyComponentData>;
+	readonly components: Array<AnyComponentData>;
 }
 
 /**
- * Represents the server's state at the given frame number.
+ * Represents the server's state at the beginning of the frame.
  *
- * Snapshots should be rolled back in this order:
+ * Entity snapshots should be rolled back in this order:
  * - Add missing entities
  * - Set component data on entities
  * - Remove unnecessary entities
- * - Replay actions
- *
- * Note: if `entities` is not present, roll back to an earlier frame.
  */
-export interface SerializableSnapshot {
-	/** The server frame number where this snapshot is valid. */
+export interface SerializableEntitySnapshot {
 	readonly frame: number;
-	/** A list of actions to play. */
-	readonly actions: Array<AnyActionData>;
 	/** A list of entity and component data to set. */
-	readonly entities?: Array<SerializableEntity>;
+	readonly entities: Array<SerializableEntity>;
 }
 
-export const snapshotSerializer = createBinarySerializer<DataType.Packed<SerializableSnapshot>>();
+/**
+ * Represents the actions played on the server during the frame.
+ */
+export interface SerializableActionSnapshot {
+	readonly frame: number;
+	/** A map of playerIds to lists of actions to be played. */
+	readonly actions: Map<string, Array<AnyActionData>>;
+}
+
+/**
+ * Represents the actions played by the client during the frame.
+ */
+export interface SerializableClientSnapshot {
+	readonly frame: number;
+	/** A list of actions to be played. */
+	readonly actions: Array<AnyActionData>;
+}
+
+export const entitySnapshotSerializer = createBinarySerializer<DataType.Packed<SerializableEntitySnapshot>>();
+
+export const actionSnapshotSerializer = createBinarySerializer<DataType.Packed<SerializableActionSnapshot>>();
+
+export const clientSnapshotSerializer = createBinarySerializer<DataType.Packed<SerializableClientSnapshot>>();
