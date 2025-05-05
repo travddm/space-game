@@ -6,6 +6,7 @@ import { world } from "./world";
 
 const entityMap = new Map<number, Entity>();
 const entityIdMap = new Map<Entity, number>();
+const entityIds = new Array<number>();
 
 export function addEntity(entityId: number) {
 	if (entityMap.get(entityId) !== undefined) log.error(`Entity ${entityId} already exists!`);
@@ -13,6 +14,7 @@ export function addEntity(entityId: number) {
 	const entity = world.entity();
 	entityMap.set(entityId, entity);
 	entityIdMap.set(entity, entityId);
+	entityIds.push(entityId);
 
 	return entity;
 }
@@ -24,6 +26,9 @@ export function removeEntity(entityId: number) {
 		world.delete(entity);
 		entityMap.delete(entityId);
 		entityIdMap.delete(entity);
+
+		const idx = entityIds.indexOf(entityId);
+		if (idx > -1) entityIds.unorderedRemove(idx);
 
 		return true;
 	}
@@ -37,4 +42,8 @@ export function getEntity(entityId: number) {
 
 export function getEntityId(entity: Entity) {
 	return entityIdMap.get(entity);
+}
+
+export function getEntityIds() {
+	return entityIds;
 }
