@@ -14,8 +14,9 @@ const localShipEntities = world
 	.with(clientComponents.local, components.ship)
 	.cached();
 
-export const rotateInputAction = createInputAction(InputName.Rotate, (inputs) => {
+export const rotateInputAction = createInputAction([InputName.Rotate], (inputBuffer) => {
 	const camera = Workspace.CurrentCamera;
+	const inputs = inputBuffer[InputName.Rotate];
 	const lastInput = inputs[inputs.size() - 1];
 
 	if (camera) {

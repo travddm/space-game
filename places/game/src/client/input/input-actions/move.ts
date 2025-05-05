@@ -1,5 +1,3 @@
-import { RunService } from "@rbxts/services";
-
 import { components, getEntityId, queueAction, world } from "shared/ecs";
 import { InputName } from "shared/input";
 
@@ -16,13 +14,40 @@ const directionsPressed = {
 	right: false,
 };
 
-let connection: RBXScriptConnection | undefined;
+export const moveInputAction = createInputAction(
+	[InputName.MoveForward, InputName.MoveBackward, InputName.MoveLeft, InputName.MoveRight],
+	(inputBuffer) => {
+		const forwardInputs = inputBuffer[InputName.MoveForward];
+		const backwardInputs = inputBuffer[InputName.MoveBackward];
+		const leftwardInputs = inputBuffer[InputName.MoveLeft];
+		const rightwardInputs = inputBuffer[InputName.MoveRight];
 
-function updateMovementDirection() {
-	if (connection) return;
+		const lastForwardInput = forwardInputs[forwardInputs.size() - 1];
+		const lastBackwardInput = backwardInputs[backwardInputs.size() - 1];
+		const lastLeftwardInput = leftwardInputs[leftwardInputs.size() - 1];
+		const lastRightwardInput = rightwardInputs[rightwardInputs.size() - 1];
 
-	connection = RunService.PreRender.Once(() => {
-		connection = undefined;
+		if (lastForwardInput)
+			if (lastForwardInput.UserInputState === Enum.UserInputState.Begin) directionsPressed.forward = true;
+			else directionsPressed.forward = false;
+
+		if (lastBackwardInput)
+			if (lastBackwardInput.UserInputState === Enum.UserInputState.Begin) directionsPressed.backward = true;
+			else directionsPressed.backward = false;
+
+		if (lastLeftwardInput)
+			if (lastLeftwardInput.UserInputState === Enum.UserInputState.Begin) directionsPressed.left = true;
+			else directionsPressed.left = false;
+
+		if (lastRightwardInput)
+			if (lastRightwardInput.UserInputState === Enum.UserInputState.Begin) directionsPressed.right = true;
+			else directionsPressed.right = false;
+
+		const moveDirection = new Vector3(
+			(directionsPressed.right ? 1 : 0) - (directionsPressed.left ? 1 : 0),
+			0,
+			(directionsPressed.backward ? 1 : 0) - (directionsPressed.forward ? 1 : 0),
+		).Unit;
 
 		for (const [entity] of localMovableShipEntities) {
 			const entityId = getEntityId(entity);
@@ -30,48 +55,8 @@ function updateMovementDirection() {
 			if (entityId !== undefined)
 				queueAction("moveEntity", {
 					entityId,
-					moveDirection: new Vector3(
-						(directionsPressed.right ? 1 : 0) - (directionsPressed.left ? 1 : 0),
-						0,
-						(directionsPressed.backward ? 1 : 0) - (directionsPressed.forward ? 1 : 0),
-					).Unit,
+					moveDirection,
 				});
 		}
-	});
-}
-
-export const moveForwardInputAction = createInputAction(InputName.MoveForward, (inputs) => {
-	const lastInput = inputs[inputs.size() - 1];
-
-	if (lastInput.UserInputState === Enum.UserInputState.Begin) directionsPressed.forward = true;
-	else directionsPressed.forward = false;
-
-	updateMovementDirection();
-});
-
-export const moveBackwardInputAction = createInputAction(InputName.MoveBackward, (inputs) => {
-	const lastInput = inputs[inputs.size() - 1];
-
-	if (lastInput.UserInputState === Enum.UserInputState.Begin) directionsPressed.backward = true;
-	else directionsPressed.backward = false;
-
-	updateMovementDirection();
-});
-
-export const moveLeftInputAction = createInputAction(InputName.MoveLeft, (inputs) => {
-	const lastInput = inputs[inputs.size() - 1];
-
-	if (lastInput.UserInputState === Enum.UserInputState.Begin) directionsPressed.left = true;
-	else directionsPressed.left = false;
-
-	updateMovementDirection();
-});
-
-export const moveRightInputAction = createInputAction(InputName.MoveRight, (inputs) => {
-	const lastInput = inputs[inputs.size() - 1];
-
-	if (lastInput.UserInputState === Enum.UserInputState.Begin) directionsPressed.right = true;
-	else directionsPressed.right = false;
-
-	updateMovementDirection();
-});
+	},
+);

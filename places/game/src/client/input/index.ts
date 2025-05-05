@@ -1,42 +1,59 @@
 import { UserInputService } from "@rbxts/services";
 
-import { Input, defaultInputConfig } from "shared/input";
+import { log } from "common/shared/log";
 
-import { InputActionCallback } from "./input-action";
+import { Input, InputName, defaultInputConfig } from "shared/input";
+
+import { InputActionBuffer, InputActionCallback } from "./input-action";
 import { inputActions } from "./input-actions";
 
 export * from "./input-actions";
 
-type MappedInput = {
-	callbacks: InputActionCallback[];
-	buffer: InputObject[];
+type MappedInputAction<N extends InputName[] = InputName[]> = {
+	readonly callback: InputActionCallback<N>;
+	readonly buffer: InputActionBuffer<N>;
 };
 
-const inputMap = new Map<Input, MappedInput>();
+const inputNameMap = new Map<Input, InputName>();
+const inputActionMap = new Map<Input, MappedInputAction>();
 
 export function startInputHandler() {
-	for (const inputAction of inputActions) {
-		const inputs = defaultInputConfig[inputAction.inputName];
-		const callback = inputAction.callback;
-
+	// populate inputNameMap
+	for (const [inputName, inputs] of pairs(defaultInputConfig)) {
 		for (const input of inputs) {
-			const mappedInput = inputMap.get(input);
+			if (inputNameMap.has(input)) {
+				log.warn(`Attempted to set input ${input} to more than a single inputName!`);
+				continue;
+			}
 
-			if (mappedInput) mappedInput.callbacks.push(callback);
-			else
-				inputMap.set(input, {
-					callbacks: [callback],
-					buffer: [],
-				});
+			inputNameMap.set(input, inputName);
+		}
+	}
+
+	// populate inputActionMap
+	for (const inputAction of inputActions) {
+		const mappedInput: MappedInputAction = {
+			callback: inputAction.callback,
+			buffer: {} as InputActionBuffer<InputName[]>,
+		};
+
+		for (const inputName of inputAction.inputNames) {
+			rawset(mappedInput.buffer, inputName, []);
+
+			for (const input of defaultInputConfig[inputName]) inputActionMap.set(input, mappedInput);
 		}
 	}
 
 	function bufferInput(inputObject: InputObject, gameProcessed: boolean) {
 		if (gameProcessed) return;
 
-		const mappedInput = inputMap.get(inputObject.UserInputType) ?? inputMap.get(inputObject.KeyCode);
+		const mappedInput = inputActionMap.get(inputObject.UserInputType) ?? inputActionMap.get(inputObject.KeyCode);
 
-		if (mappedInput) mappedInput.buffer.push(inputObject);
+		if (mappedInput) {
+			const inputName = inputNameMap.get(inputObject.UserInputType) ?? inputNameMap.get(inputObject.KeyCode);
+
+			if (inputName) mappedInput.buffer[inputName].push(inputObject);
+		}
 	}
 
 	UserInputService.InputBegan.Connect(bufferInput);
@@ -45,11 +62,15 @@ export function startInputHandler() {
 }
 
 export function flushInputHandler() {
-	for (const [_, mappedInput] of inputMap) {
-		const buffer = mappedInput.buffer;
+	for (const [_, mappedInput] of inputActionMap) {
+		const inputBuffer = mappedInput.buffer;
 
-		if (buffer.size() > 0) for (const callback of mappedInput.callbacks) callback(buffer);
+		let isEmpty = true;
 
-		buffer.clear();
+		for (const [_, buf] of pairs(inputBuffer)) if (buf.size() > 0) isEmpty = false;
+
+		if (!isEmpty) mappedInput.callback(inputBuffer);
+
+		for (const [_, buf] of pairs(inputBuffer)) buf.clear();
 	}
 }

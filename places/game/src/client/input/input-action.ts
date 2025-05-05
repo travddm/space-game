@@ -1,17 +1,24 @@
 import { InputName } from "shared/input";
 
-export interface InputActionCallback {
-	(inputs: InputObject[]): void;
+export type InputActionBuffer<N extends InputName[]> = {
+	readonly [K in N[number]]: InputObject[];
+};
+
+export interface InputActionCallback<N extends InputName[]> {
+	(inputBuffer: InputActionBuffer<N>): void;
 }
 
-export interface InputAction {
-	inputName: InputName;
-	callback: InputActionCallback;
+export interface InputAction<N extends InputName[]> {
+	readonly inputNames: N;
+	readonly callback: InputActionCallback<N>;
 }
 
-export function createInputAction(inputName: InputName, callback: InputActionCallback): InputAction {
+export function createInputAction<N extends InputName[]>(
+	inputNames: N,
+	callback: InputActionCallback<N>,
+): InputAction<N> {
 	return {
-		inputName,
+		inputNames,
 		callback,
 	};
 }
