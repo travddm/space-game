@@ -22,20 +22,14 @@ export function startScheduler(config: ClientSchedulerConfig) {
 	const maxTimeStep = config.maxTimeStep;
 	const flushInput = config.flushInput;
 
+	const flushInputId = scheduler.register_system({
+		name: "flush-input",
+		phase: "fixedUpdate",
+	});
+
 	let frame = 0;
 	let accumulator = 0;
 	let blendFactor = 0;
-
-	function sendClientSnapshot() {
-		const actions = new Array<AnyActionData>();
-
-		for (const [actionName, actionList] of pairs(actionQueue))
-			for (const actionData of actionList)
-				actions.push({
-					name: actionName,
-					data: actionData,
-				} as AnyActionData);
-	}
 
 	function onHeartbeat(deltaTime: number) {
 		const framePrevious = frame;
@@ -57,8 +51,7 @@ export function startScheduler(config: ClientSchedulerConfig) {
 			let actions: ActionQueue;
 
 			if (!isBehind) {
-				flushInput();
-				sendClientSnapshot();
+				scheduler.run(flushInputId, flushInput);
 				actions = actionQueue;
 			} else actions = {};
 
