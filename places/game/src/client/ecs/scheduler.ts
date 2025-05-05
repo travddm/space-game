@@ -2,13 +2,11 @@ import { RunService } from "@rbxts/services";
 
 import {
 	ActionQueue,
-	AnyActionData,
 	SchedulerConfig,
 	SystemCallbackType,
 	actionQueue,
 	getScheduler,
 	registerSystems,
-	world,
 } from "shared/ecs";
 
 export interface ClientSchedulerConfig extends SchedulerConfig {
