@@ -17,7 +17,7 @@ type MappedInputAction<N extends InputName[] = InputName[]> = {
 const inputNameMap = new Map<Input, InputName>();
 const inputActionMap = new Map<Input, MappedInputAction>();
 
-export function startInputHandler() {
+export function startInputManager() {
 	// populate inputNameMap
 	for (const [inputName, inputs] of pairs(defaultInputConfig)) {
 		for (const input of inputs) {
@@ -61,7 +61,7 @@ export function startInputHandler() {
 	UserInputService.InputEnded.Connect(bufferInput);
 }
 
-export function flushInputHandler() {
+export function flushInput() {
 	for (const [_, mappedInput] of inputActionMap) {
 		const inputBuffer = mappedInput.buffer;
 

@@ -6,7 +6,7 @@ import { fixedTimeStep, maxTimeStep } from "shared/constants";
 import { queueAction } from "shared/ecs";
 
 import { clientSystems, startScheduler } from "./ecs";
-import { flushInputHandler, startInputHandler } from "./input";
+import { flushInput, startInputManager } from "./input";
 
 export function main() {
 	log.info("Started initializing client");
@@ -15,9 +15,9 @@ export function main() {
 		fixedTimeStep,
 		maxTimeStep,
 		systems: clientSystems,
-		flushInput: flushInputHandler,
+		flushInput,
 	});
-	startInputHandler();
+	startInputManager();
 
 	log.info("Finished initializing client");
 
