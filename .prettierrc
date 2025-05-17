@@ -5,6 +5,7 @@
 	"useTabs": true,
 	"plugins": ["@trivago/prettier-plugin-sort-imports"],
 	"importOrder": ["^@rbxts/services$", "@flamework/(.*)$", "^@rbxts/(.*)$", "^common/(.*)$", "^shared/(.*)$", "^client/(.*)$", "^server/(.*)$", "^[./]"],
+	"importOrderParserPlugins": ["typescript", "decorators-legacy"],
 	"importOrderSeparation": true,
 	"importOrderSortSpecifiers": true
 }
