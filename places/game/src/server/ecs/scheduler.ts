@@ -167,7 +167,7 @@ export function startScheduler(config: SchedulerConfig) {
 									actions: [],
 								});
 						}
-					} else if (snapshotFrame > frameDelayed) {
+					} else {
 						canProcess = true;
 
 						// check for missing actions
