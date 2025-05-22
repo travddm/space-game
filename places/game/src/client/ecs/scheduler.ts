@@ -169,20 +169,21 @@ export function startScheduler(config: ClientSchedulerConfig) {
 	function onHeartbeat(deltaTime: number) {
 		const prevServerFrame = serverFrame;
 
-		scheduler.run(rollbackId, rollback);
-
 		deltaTime = math.min(deltaTime, maxTimeStep);
 		accumulator += deltaTime;
 
 		const prevClientFrame = clientFrame;
-		const prevFrame = prevServerFrame !== serverFrame ? serverFrame : prevClientFrame;
 		const frameSteps = math.floor(accumulator / timeStep);
-		const targetFrame = serverFrame + serverFrameDelay;
 
 		if (frameSteps > 0) {
+			scheduler.run(rollbackId, rollback);
+
 			accumulator -= frameSteps * timeStep;
 			clientFrame += frameSteps;
 		}
+
+		const targetFrame = serverFrame + serverFrameDelay;
+		const prevFrame = prevServerFrame !== serverFrame ? serverFrame : prevClientFrame;
 
 		if (targetFrame > clientFrame) {
 			// if the client is behind, skip ahead 1 frame
