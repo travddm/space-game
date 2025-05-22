@@ -15,8 +15,8 @@ export const addEntitiesSystem = createSystem({
 					const entityId = action.data.entityId;
 					const entityComponents = action.data.components;
 
-					// TODO: uncomment lol
-					//if (playerId === "server") {
+					if (playerId !== "server") continue;
+
 					let entity = getEntity(entityId);
 					if (entity !== undefined) {
 						for (const [componentName, component] of pairs(components))
@@ -28,7 +28,6 @@ export const addEntitiesSystem = createSystem({
 
 						world.set(entity, component, componentData);
 					}
-					//}
 				}
 		},
 	},

@@ -1,6 +1,5 @@
-import { getEntity } from "../entity";
+import { removeEntity } from "../entity";
 import { SystemCallbackType, createSystem } from "../system";
-import { world } from "../world";
 import { addEntitiesSystem } from "./add-entities";
 
 export const deleteEntitiesSystem = createSystem({
@@ -13,13 +12,10 @@ export const deleteEntitiesSystem = createSystem({
 			if (deleteEntityActions)
 				for (const action of deleteEntityActions) {
 					const playerId = action.playerId;
-					const entity = getEntity(action.data.entityId);
 
-					if (entity === undefined) continue;
+					if (playerId !== "server") continue;
 
-					// TODO: uncomment lol
-					// if (playerId === "server")
-					world.delete(entity);
+					removeEntity(action.data.entityId);
 				}
 		},
 	},
