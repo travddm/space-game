@@ -14,7 +14,7 @@ export function startPlayerManager() {
 				player: playerId,
 				transform: CFrame.identity,
 				movable: {
-					moveSpeed: 10,
+					moveSpeed: 20,
 					moveDirection: Vector3.zero,
 					moveVelocity: Vector3.zero,
 					rotateSpeed: math.rad(540),
