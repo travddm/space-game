@@ -1,7 +1,15 @@
 import { DataType, createBinarySerializer } from "@rbxts/flamework-binary-serializer";
 
-import { AnyActionData } from "./ecs/actions";
-import { AnyComponentData } from "./ecs/components";
+import { AnyActionData } from "./actions";
+import { AnyComponentData } from "./components";
+
+/**
+ * Represents all of a player's actions played during the frame.
+ */
+export interface SerializablePlayerActions {
+	playerId: string;
+	actions: Array<AnyActionData>;
+}
 
 /**
  * Represents the server entity's state at the beginning of the frame.
@@ -13,6 +21,9 @@ export interface SerializableEntity {
 	readonly components: Array<AnyComponentData>;
 }
 
+export type SerializableActions = Array<SerializablePlayerActions>;
+export type SerializableEntities = Array<SerializableEntity>;
+
 /**
  * Represents the server's state at the beginning of the frame.
  *
@@ -21,19 +32,13 @@ export interface SerializableEntity {
  * - Set component data on entities
  * - Remove unnecessary entities
  */
-export interface SerializableEntitySnapshot {
+export interface SerializableServerSnapshot {
 	readonly frame: number;
-	/** A list of entity and component data to set. */
-	readonly entities: Array<SerializableEntity>;
-}
-
-/**
- * Represents the actions played on the server during the frame.
- */
-export interface SerializableActionSnapshot {
-	readonly frame: number;
+	readonly frameDelay: number;
 	/** A map of playerIds to lists of actions to be played. */
-	readonly actions: Map<string, Array<AnyActionData>>;
+	readonly actions: SerializableActions;
+	/** A list of entity and component data to set. */
+	readonly entities?: SerializableEntities;
 }
 
 /**
@@ -45,8 +50,6 @@ export interface SerializableClientSnapshot {
 	readonly actions: Array<AnyActionData>;
 }
 
-export const entitySnapshotSerializer = createBinarySerializer<DataType.Packed<SerializableEntitySnapshot>>();
-
-export const actionSnapshotSerializer = createBinarySerializer<DataType.Packed<SerializableActionSnapshot>>();
+export const serverSnapshotSerializer = createBinarySerializer<DataType.Packed<SerializableServerSnapshot>>();
 
 export const clientSnapshotSerializer = createBinarySerializer<DataType.Packed<SerializableClientSnapshot>>();

@@ -16,7 +16,7 @@ export interface EntityAction {
 	entityId: number;
 }
 
-const playerId = RunService.IsClient() ? tostring(Players.LocalPlayer?.UserId) : "server";
+export const playerId = RunService.IsClient() ? tostring(Players.LocalPlayer?.UserId) : "server";
 
 export function createAction<D = unknown>(): Action<D> {
 	return (data: D) => {

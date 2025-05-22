@@ -1,6 +1,6 @@
 import { Scheduler, SystemId } from "@rbxts/jabby/out/jabby/modules/types";
 
-import { ActionQueue } from "./action-queue";
+import { ActionDataByName } from "./actions";
 
 export const enum SystemCallbackType {
 	/** For updating game state on a fixed timestep. Uses `RunService.Heartbeat` and an accumulator. */
@@ -17,7 +17,7 @@ export const enum SystemCallbackType {
 }
 
 export interface SystemFixedCallback {
-	(deltaTime: number, frame: number, actions: ActionQueue): void;
+	(deltaTime: number, frame: number, actions: ActionDataByName): void;
 }
 
 export interface SystemVariableCallback {

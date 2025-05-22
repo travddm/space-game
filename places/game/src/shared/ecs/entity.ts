@@ -8,6 +8,12 @@ const entityMap = new Map<number, Entity>();
 const entityIdMap = new Map<Entity, number>();
 const entityIds = new Array<number>();
 
+let entityIdCounter = 0;
+
+export function nextEntityId() {
+	return entityIdCounter++;
+}
+
 export function addEntity(entityId: number) {
 	if (entityMap.get(entityId) !== undefined) log.error(`Entity ${entityId} already exists!`);
 

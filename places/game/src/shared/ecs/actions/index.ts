@@ -11,6 +11,8 @@ export const actions = {
 	rotateEntity,
 };
 
+export const predictableActions = new Set<ActionName>(["moveEntity", "rotateEntity"]);
+
 export type Actions = typeof actions;
 export type ActionName = keyof Actions;
 
@@ -21,3 +23,7 @@ export type AnyActionData = {
 		readonly data: InferActionData<Actions[N]>;
 	};
 }[ActionName];
+
+export type ActionDataByName = {
+	[N in ActionName]?: InferActionData<Actions[N]>[];
+};
