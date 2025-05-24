@@ -31,9 +31,9 @@ export const renderShipsSystem = createSystem({
 			for (const entity of shipMonitor.added()) {
 				const [ship, transform] = world.get(entity, components.ship, components.transform);
 
-				if (ship && transform) {
+				if (ship !== undefined && transform) {
 					const model = new Instance("Part");
-					model.Name = ship?.name;
+					model.Name = tostring(entity);
 					model.Anchored = true;
 					model.CanCollide = false;
 					model.CanTouch = false;

@@ -19,8 +19,11 @@ export function startPlayerManager() {
 					rotateSpeed: math.rad(540),
 					rotateDirection: Vector3.xAxis,
 				},
-				ship: {
+				nametag: {
 					name: player.DisplayName,
+				},
+				ship: {
+					shipType: 0,
 				},
 			},
 		});
