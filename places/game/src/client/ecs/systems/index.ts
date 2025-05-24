@@ -2,6 +2,6 @@ import { System, systems as sharedSystems } from "shared/ecs";
 
 import { renderCameraSystem } from "./render-camera";
 import { renderDustSystem } from "./render-dust";
-import { renderShipsSystem } from "./render-ships";
+import { renderModelsSystem } from "./render-models";
 
-export const clientSystems: System[] = [renderCameraSystem, renderShipsSystem, renderDustSystem, ...sharedSystems];
+export const clientSystems: System[] = [renderCameraSystem, renderModelsSystem, renderDustSystem, ...sharedSystems];

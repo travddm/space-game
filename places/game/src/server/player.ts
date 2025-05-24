@@ -22,8 +22,8 @@ export function startPlayerManager() {
 				nametag: {
 					name: player.DisplayName,
 				},
-				ship: {
-					shipType: 0,
+				model: {
+					modelId: "todo",
 				},
 			},
 		});

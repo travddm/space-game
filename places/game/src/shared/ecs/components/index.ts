@@ -1,16 +1,16 @@
 import { Entity, InferComponent } from "@rbxts/jecs";
 
+import { modelComponent } from "./model";
 import { movableComponent } from "./movable";
 import { nametagComponent } from "./nametag";
 import { playerComponent } from "./player";
-import { shipComponent } from "./ship";
 import { transformComponent } from "./transform";
 
 export const components = {
 	transform: transformComponent,
 	movable: movableComponent,
 	player: playerComponent,
-	ship: shipComponent,
+	model: modelComponent,
 	nametag: nametagComponent,
 };
 

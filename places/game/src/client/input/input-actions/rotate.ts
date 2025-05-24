@@ -9,9 +9,9 @@ import { clientComponents } from "client/ecs";
 
 import { createInputAction } from "../input-action";
 
-const localShipEntities = world
-	.query(components.movable, clientComponents.shipRender)
-	.with(clientComponents.local, components.ship)
+const localMovablePlayerEntities = world
+	.query(components.movable, clientComponents.modelRender)
+	.with(clientComponents.local, components.player)
 	.cached();
 
 export const rotateInputAction = createInputAction([InputName.Rotate], (inputBuffer) => {
@@ -24,12 +24,12 @@ export const rotateInputAction = createInputAction([InputName.Rotate], (inputBuf
 		const ray = camera.ScreenPointToRay(inputPosition.X, inputPosition.Y);
 		const targetPosition = getIntersectionY(ray.Origin, ray.Direction);
 
-		for (const [entity, movable, shipRender] of localShipEntities) {
+		for (const [entity, movable, modelRender] of localMovablePlayerEntities) {
 			const entityId = getEntityId(entity);
 
 			if (entityId !== undefined) {
 				const lookVector = movable.rotateDirection;
-				const targetLookVector = targetPosition.sub(shipRender.model.Position).Unit;
+				const targetLookVector = targetPosition.sub(modelRender.model.Position).Unit;
 
 				const angle = getAngleDifferenceY(lookVector, targetLookVector);
 

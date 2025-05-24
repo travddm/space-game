@@ -5,7 +5,10 @@ import { clientComponents } from "client/ecs";
 
 import { createInputAction } from "../input-action";
 
-const localMovableShipEntities = world.query(clientComponents.local).with(components.movable, components.ship).cached();
+const localMovablePlayerEntities = world
+	.query(clientComponents.local)
+	.with(components.movable, components.player)
+	.cached();
 
 const directionsPressed = {
 	forward: false,
@@ -49,7 +52,7 @@ export const moveInputAction = createInputAction(
 			(directionsPressed.backward ? 1 : 0) - (directionsPressed.forward ? 1 : 0),
 		).Unit;
 
-		for (const [entity] of localMovableShipEntities) {
+		for (const [entity] of localMovablePlayerEntities) {
 			const entityId = getEntityId(entity);
 
 			if (entityId !== undefined)
