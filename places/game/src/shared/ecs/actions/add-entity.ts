@@ -1,12 +1,20 @@
+import { RunService } from "@rbxts/services";
+
 import { InferComponent } from "@rbxts/jecs";
 
-import { EntityAction, createAction } from "../action";
+import { createAction } from "../action";
 import { ComponentName, Components } from "../components";
 
-export interface AddEntity extends EntityAction {
+export interface AddEntity {
+	serverEntityId?: number;
+
 	readonly components: {
 		readonly [N in ComponentName]?: InferComponent<Components[N]>;
 	};
 }
 
-export const addEntity = createAction<AddEntity>();
+const isServer = RunService.IsServer();
+
+export const addEntity = createAction<AddEntity>((data) =>
+	isServer ? data.serverEntityId === undefined : data.serverEntityId !== undefined,
+);

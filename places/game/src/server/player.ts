@@ -1,6 +1,6 @@
 import { Players } from "@rbxts/services";
 
-import { components, getEntityId, nextEntityId, queueAction, world } from "shared/ecs";
+import { components, getEntityId, queueAction, world } from "shared/ecs";
 
 const playerEntities = world.query(components.player).cached();
 
@@ -9,7 +9,6 @@ export function startPlayerManager() {
 		const playerId = tostring(player.UserId);
 
 		queueAction("addEntity", {
-			entityId: nextEntityId(),
 			components: {
 				player: playerId,
 				transform: CFrame.identity,

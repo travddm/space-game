@@ -18,11 +18,22 @@ export interface EntityAction {
 
 export const playerId = RunService.IsClient() ? tostring(Players.LocalPlayer?.UserId) : "server";
 
-export function createAction<D = unknown>(): Action<D> {
-	return (data: D) => {
-		return {
-			playerId,
-			data,
+export function createAction<D = unknown>(guard?: (data: D) => boolean): Action<D> {
+	if (guard) {
+		const trace = debug.traceback(`Action did not pass guard`, 1);
+
+		return (data: D) =>
+			guard(data)
+				? {
+						playerId,
+						data,
+					}
+				: error(trace);
+	} else
+		return (data: D) => {
+			return {
+				playerId,
+				data,
+			};
 		};
-	};
 }

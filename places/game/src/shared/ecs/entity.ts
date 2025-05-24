@@ -1,3 +1,5 @@
+import { RunService } from "@rbxts/services";
+
 import { Entity } from "@rbxts/jecs";
 
 import { log } from "common/shared/log";
@@ -8,13 +10,10 @@ const entityMap = new Map<number, Entity>();
 const entityIdMap = new Map<Entity, number>();
 const entityIds = new Array<number>();
 
-let entityIdCounter = 0;
-
-export function nextEntityId() {
-	return entityIdCounter++;
-}
+const isServer = RunService.IsServer();
 
 export function addEntity(entityId: number) {
+	if (isServer) log.error("Do not call addEntity(entityId) on the server! Use world.entity() instead.", 1);
 	if (entityMap.get(entityId) !== undefined) log.error(`Entity ${entityId} already exists!`);
 
 	const entity = world.entity();
@@ -26,30 +25,42 @@ export function addEntity(entityId: number) {
 }
 
 export function removeEntity(entityId: number) {
-	const entity = entityMap.get(entityId);
+	if (isServer) {
+		const entity = entityId as Entity;
 
-	if (entity !== undefined) {
-		world.delete(entity);
-		entityMap.delete(entityId);
-		entityIdMap.delete(entity);
+		if (world.has(entity)) {
+			world.delete(entity);
 
-		const idx = entityIds.indexOf(entityId);
-		if (idx > -1) entityIds.unorderedRemove(idx);
+			return true;
+		} else return false;
+	} else {
+		const entity = entityMap.get(entityId);
 
-		return true;
+		if (entity !== undefined) {
+			world.delete(entity);
+			entityMap.delete(entityId);
+			entityIdMap.delete(entity);
+
+			const idx = entityIds.indexOf(entityId);
+			if (idx > -1) entityIds.unorderedRemove(idx);
+
+			return true;
+		} else return false;
 	}
-
-	return false;
 }
 
 export function getEntity(entityId: number) {
-	return entityMap.get(entityId);
+	if (isServer) return entityId as Entity | undefined;
+	else return entityMap.get(entityId);
 }
 
 export function getEntityId(entity: Entity) {
-	return entityIdMap.get(entity);
+	if (isServer) return entity;
+	else return entityIdMap.get(entity);
 }
 
 export function getEntityIds() {
+	if (isServer) log.error("Do not call getEntityIds() on the server! Use world.query(...) instead.", 1);
+
 	return entityIds;
 }

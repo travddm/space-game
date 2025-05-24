@@ -13,6 +13,7 @@ import {
 import { playerId } from "shared/ecs/action";
 import {
 	SerializableActions,
+	SerializableEntity,
 	SerializablePlayerActions,
 	SerializableServerSnapshot,
 	clientSnapshotSerializer,
@@ -47,6 +48,10 @@ export function startScheduler(config: SchedulerConfig) {
 		name: "serialize",
 		phase: "fixedUpdate",
 	});
+	const prepareId = scheduler.register_system({
+		name: "prepare",
+		phase: "fixedUpdate",
+	});
 
 	const maxFrameDelay = math.floor(maxTimeStep / timeStep);
 	const pendingSnapshots = new Array<PendingSnapshot>();
@@ -58,15 +63,26 @@ export function startScheduler(config: SchedulerConfig) {
 	let accumulator = 0;
 	let blendFactor = 0;
 
-	function sendSnapshot(frame: number, actions: SerializableActions) {
-		const frameDelay = serverFrame - frame;
+	let nextSnapshotFrame = 0;
+	let nextSnapshotActions = new Array<SerializablePlayerActions>();
+	let nextSnapshotEntities = new Array<SerializableEntity>();
+
+	function prepareSnapshot(frame: number, actions: SerializableActions) {
+		nextSnapshotFrame = frame;
+		nextSnapshotActions = actions;
+
+		if (resyncPlayers.size() > 0) nextSnapshotEntities = getSerializableEntities();
+	}
+
+	function sendSnapshot() {
+		const frameDelay = serverFrame - nextSnapshotFrame;
 		const numPlayers = players.size();
 
 		if (numPlayers > 0) {
 			const serverSnapshot: SerializableServerSnapshot = {
-				frame,
+				frame: nextSnapshotFrame,
 				frameDelay,
-				actions,
+				actions: nextSnapshotActions,
 			};
 			const serialized = serverSnapshotSerializer.serialize(serverSnapshot);
 
@@ -75,10 +91,10 @@ export function startScheduler(config: SchedulerConfig) {
 
 		if (resyncPlayers.size() > 0) {
 			const serverSnapshotWithEntities: SerializableServerSnapshot = {
-				frame,
+				frame: nextSnapshotFrame,
 				frameDelay,
-				actions,
-				entities: getSerializableEntities(),
+				actions: nextSnapshotActions,
+				entities: nextSnapshotEntities,
 			};
 			const serialized = serverSnapshotSerializer.serialize(serverSnapshotWithEntities);
 			serverEvents.serverSnapshot.fire(resyncPlayers, serialized.buffer);
@@ -188,12 +204,14 @@ export function startScheduler(config: SchedulerConfig) {
 
 						actions.sort(sortPlayerActions);
 
-						scheduler.run(serializeId, sendSnapshot, snapshotFrame, actions);
+						scheduler.run(prepareId, prepareSnapshot, snapshotFrame, actions);
 
 						const actionDataByName = getActionDataByName(actions);
 
 						for (const system of registeredSystems[SystemCallbackType.OnFixedUpdate])
 							scheduler.run(system.id, system.callback, timeStep, snapshotFrame, actionDataByName);
+
+						scheduler.run(serializeId, sendSnapshot);
 					}
 				} else canProcess = false;
 			} while (canProcess);
