@@ -30,7 +30,7 @@ let dustTime = 1 / DUST_VISUAL_SPEED;
 export const renderDustSystem = createSystem({
 	name: "render-dust",
 	callbacks: {
-		[SystemCallbackType.OnRender]: (deltaTime, frame, blend) => {
+		[SystemCallbackType.OnUpdate]: (deltaTime, frame, blend) => {
 			dustTime += deltaTime;
 
 			const camera = Workspace.CurrentCamera;

@@ -22,7 +22,7 @@ let lastFrame = 0;
 export const renderModelsSystem = createSystem({
 	name: "render-models",
 	callbacks: {
-		[SystemCallbackType.OnRender]: (deltaTime, frame, blend) => {
+		[SystemCallbackType.OnUpdate]: (deltaTime, frame, blend) => {
 			const isNewFrame = frame !== lastFrame;
 
 			bulkMoveToParts.clear();
