@@ -6,10 +6,13 @@ import { SystemCallbackType, createSystem } from "shared/ecs";
 
 import { vfxContainer } from "client/containers";
 
-const DUST_DEPTH = 20; // studs
-const DUST_SPACING = 2; // studs
+const DUST_DEPTH = 40; // studs
+const DUST_SPACING = 16; // studs
 const DUST_SPEED = 1 / 10; // studs/sec
 const DUST_VISUAL_SPEED = 1 / 100;
+const DUST_RADIUS = 2; // pixels
+const DUST_CACHED = 50; // max dust to cache
+const CACHE_CFRAME = new CFrame(0, 0, -2048);
 
 const adornee = new Instance("Part");
 adornee.Name = "TurnToDust";
@@ -26,6 +29,8 @@ const dustParticles = new Array<SphereHandleAdornment>();
 
 // ensure dust visual noise doesn't start at <1
 let dustTime = 1 / DUST_VISUAL_SPEED;
+let lastParticleRadius = 0;
+let lastDustCounter = 0;
 
 export const renderDustSystem = createSystem({
 	name: "render-dust",
@@ -36,7 +41,10 @@ export const renderDustSystem = createSystem({
 			const camera = Workspace.CurrentCamera;
 
 			if (camera) {
+				debug.profilebegin("dust");
 				const viewportSize = camera.ViewportSize;
+				const cameraCFrame = camera.CFrame;
+				const particleRadius = (DUST_RADIUS * cameraCFrame.Y) / viewportSize.Y;
 				const rayTopLeft = camera.ViewportPointToRay(0, 0);
 				const rayBottomRight = camera.ViewportPointToRay(viewportSize.X, viewportSize.Y);
 
@@ -68,12 +76,11 @@ export const renderDustSystem = createSystem({
 
 				for (let x = minX; x <= maxX; x += DUST_SPACING) {
 					for (let z = minZ; z <= maxZ; z += DUST_SPACING) {
-						const xn = x * math.pi;
-						const zn = z * math.pi;
+						const xn = x * math.pi * 10;
+						const zn = z * math.pi * 10;
 
-						if (math.noise(xn, zn) > -0.5) continue;
-
-						const transparency = (math.noise(xn, zn, dustVisual) + 1) / 2;
+						const xOffset = math.noise(xn, zn) * DUST_SPACING;
+						const zOffset = math.noise(zn, xn) * DUST_SPACING;
 						const height = (math.noise(zn, xn, dustVisual) + 1) * 0.5 * DUST_DEPTH;
 
 						let particle = dustParticles[dustCounter];
@@ -82,21 +89,40 @@ export const renderDustSystem = createSystem({
 							particle = new Instance("SphereHandleAdornment");
 							particle.Name = "Dust";
 							particle.Adornee = adornee;
-							particle.Radius = 1 / 30;
+							particle.Radius = particleRadius;
+							particle.Transparency = 0.2;
 							particle.Color3 = new Color3(1, 1, 1);
 							particle.Parent = adornee;
 
 							dustParticles.push(particle);
 						}
 
-						particle.Transparency = transparency;
-						particle.CFrame = new CFrame(x + dustOffset, height - DUST_DEPTH, z + dustOffset);
+						particle.CFrame = new CFrame(
+							x + dustOffset + xOffset,
+							height - DUST_DEPTH,
+							z + dustOffset + zOffset,
+						);
 
 						dustCounter++;
 					}
 				}
 
-				for (let i = 0; i < dustParticles.size() - dustCounter; i++) dustParticles.pop()?.Destroy();
+				if (particleRadius !== lastParticleRadius) {
+					lastParticleRadius = particleRadius;
+
+					for (const particle of dustParticles) particle.Radius = particleRadius;
+				}
+
+				const numParticles = dustParticles.size();
+				const newCachedDust = math.clamp(lastDustCounter - dustCounter, 0, DUST_CACHED);
+				for (let i = 0; i < numParticles - dustCounter; i++) {
+					if (i >= DUST_CACHED) dustParticles.pop()?.Destroy();
+					else if (i < newCachedDust) dustParticles[dustCounter + i].CFrame = CACHE_CFRAME;
+				}
+
+				lastDustCounter = dustCounter;
+
+				debug.profileend();
 			}
 		},
 	},
