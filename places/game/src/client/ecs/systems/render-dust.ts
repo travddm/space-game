@@ -4,7 +4,7 @@ import { getIntersectionY } from "common/shared/util";
 
 import { SystemCallbackType, createSystem } from "shared/ecs";
 
-import { vfxContainer } from "../containers";
+import { vfxContainer } from "client/containers";
 
 const DUST_DEPTH = 20; // studs
 const DUST_SPACING = 2; // studs

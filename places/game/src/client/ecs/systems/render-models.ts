@@ -5,8 +5,9 @@ import { Entity } from "@rbxts/jecs";
 import { SystemCallbackType, components, createSystem, world } from "shared/ecs";
 import { monitor } from "shared/ecs/monitor";
 
+import { modelContainer } from "client/containers";
+
 import { clientComponents } from "../components";
-import { modelContainer } from "../containers";
 
 const modelMonitor = monitor(components.model);
 const renderedModels = world.query(components.transform, clientComponents.modelRender).cached();
