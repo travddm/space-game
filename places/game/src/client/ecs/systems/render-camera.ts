@@ -3,13 +3,15 @@ import { Workspace } from "@rbxts/services";
 import { SystemCallbackType, createSystem, world } from "shared/ecs";
 
 import { clientComponents } from "../components";
+import { renderModelsSystem } from "./render-models";
 
 const localModels = world.query(clientComponents.modelRender).with(clientComponents.local).cached();
 
 export const renderCameraSystem = createSystem({
 	name: "render-camera",
+	dependencies: [renderModelsSystem],
 	callbacks: {
-		[SystemCallbackType.OnRender]: (deltaTime, frame, blend) => {
+		[SystemCallbackType.OnUpdate]: (deltaTime, frame, blend) => {
 			const camera = Workspace.CurrentCamera;
 
 			if (camera) {
