@@ -6,11 +6,13 @@ import { SystemCallbackType, createSystem } from "shared/ecs";
 
 import { vfxContainer } from "client/containers";
 
+import { renderCameraSystem } from "./render-camera";
+
 const DUST_DEPTH = 40; // studs
 const DUST_SPACING = 16; // studs
 const DUST_SPEED = 1 / 10; // studs/sec
 const DUST_VISUAL_SPEED = 1 / 100;
-const DUST_RADIUS = 2; // pixels
+const DUST_RADIUS = 2.5; // pixels
 const DUST_CACHED = 50; // max dust to cache
 const CACHE_CFRAME = new CFrame(0, 0, -2048);
 
@@ -34,6 +36,7 @@ let lastDustCounter = 0;
 
 export const renderDustSystem = createSystem({
 	name: "render-dust",
+	dependencies: [renderCameraSystem],
 	callbacks: {
 		[SystemCallbackType.OnUpdate]: (deltaTime, frame, blend) => {
 			dustTime += deltaTime;
@@ -41,7 +44,6 @@ export const renderDustSystem = createSystem({
 			const camera = Workspace.CurrentCamera;
 
 			if (camera) {
-				debug.profilebegin("dust");
 				const viewportSize = camera.ViewportSize;
 				const cameraCFrame = camera.CFrame;
 				const particleRadius = (DUST_RADIUS * cameraCFrame.Y) / viewportSize.Y;
@@ -121,8 +123,6 @@ export const renderDustSystem = createSystem({
 				}
 
 				lastDustCounter = dustCounter;
-
-				debug.profileend();
 			}
 		},
 	},
