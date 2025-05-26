@@ -62,6 +62,8 @@ export const renderModelsSystem = createSystem({
 					models.delete(entity);
 					renderModel.Destroy();
 				}
+
+				if (world.has(entity, clientComponents.modelRender)) world.remove(entity, clientComponents.modelRender);
 			}
 
 			// update models
