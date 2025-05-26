@@ -52,11 +52,8 @@ export const renderNametagSystem = createSystem({
 						nameTextStroke.Transparency = 0;
 						nameTextStroke.Parent = nameText;
 
-						const modelSize = modelRender.model.Size;
-
 						world.set(entity, clientComponents.nametagRender, {
 							hidden: true,
-							offset: new Vector3(0, 0, math.max(modelSize.X, modelSize.Y, modelSize.Z) / 2),
 						});
 
 						nametags.set(entity, nametagFrame);
@@ -80,18 +77,18 @@ export const renderNametagSystem = createSystem({
 				for (const [entity, modelRender, nametagRender] of renderedNametags) {
 					const nametag = nametags.get(entity);
 					const isHidden = nametagRender.hidden;
-					const offset = nametagRender.offset;
-					const [position, onScreen] = camera.WorldToViewportPoint(modelRender.model.Position.add(offset));
 
 					if (!nametag) continue;
 
-					if (onScreen) {
+					if (modelRender.visible) {
+						const offset = new Vector3(0, 0, modelRender.radius);
+						const [position] = camera.WorldToViewportPoint(modelRender.model.Position.add(offset));
+
 						if (isHidden) {
 							nametag.Visible = true;
 
 							world.set(entity, clientComponents.nametagRender, {
 								hidden: false,
-								offset,
 							});
 						}
 
@@ -101,7 +98,6 @@ export const renderNametagSystem = createSystem({
 
 						world.set(entity, clientComponents.nametagRender, {
 							hidden: true,
-							offset,
 						});
 					}
 				}

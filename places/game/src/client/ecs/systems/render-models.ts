@@ -9,10 +9,13 @@ import { modelContainer } from "client/containers";
 
 import { clientComponents } from "../components";
 
+const CACHE_CFRAME = new CFrame(0, 0, -2048);
+
 const modelMonitor = monitor(components.model);
 const renderedModels = world.query(components.transform, clientComponents.modelRender).cached();
 
 const models = new Map<Entity, BasePart>();
+const visibleModels = new Set<Entity>();
 
 const bulkMoveToParts = new Array<BasePart>();
 const bulkMoveToCFrames = new Array<CFrame>();
@@ -44,8 +47,12 @@ export const renderModelsSystem = createSystem({
 					renderModel.CFrame = transform;
 					renderModel.Parent = modelContainer;
 
+					const modelSize = renderModel.Size;
+
 					world.set(entity, clientComponents.modelRender, {
 						model: renderModel,
+						radius: modelSize.Magnitude / 2,
+						visible: true,
 						currentTransform: transform,
 						previousTransform: transform,
 					});
@@ -63,12 +70,16 @@ export const renderModelsSystem = createSystem({
 					renderModel.Destroy();
 				}
 
-				if (world.has(entity, clientComponents.modelRender)) world.remove(entity, clientComponents.modelRender);
+				world.remove(entity, clientComponents.modelRender);
+
+				visibleModels.delete(entity);
 			}
 
 			// update models
 			for (const [entity, transform, modelRender] of renderedModels) {
 				const model = modelRender.model;
+				const radius = modelRender.radius;
+				const visible = modelRender.visible;
 
 				let currentTransform = modelRender.currentTransform;
 				let previousTransform = modelRender.previousTransform;
@@ -79,15 +90,28 @@ export const renderModelsSystem = createSystem({
 
 					world.set(entity, clientComponents.modelRender, {
 						model,
+						radius,
+						visible,
 						currentTransform,
 						previousTransform,
 					});
-				} else if (currentTransform === previousTransform) continue;
+				}
 
-				const renderCFrame = previousTransform.Lerp(currentTransform, blend);
+				const lastVisible = visibleModels.has(entity);
+				if (visible) {
+					if (!lastVisible) visibleModels.add(entity);
+					else if (currentTransform === previousTransform) continue;
 
-				bulkMoveToParts.push(model);
-				bulkMoveToCFrames.push(renderCFrame);
+					const renderCFrame = previousTransform.Lerp(currentTransform, blend);
+
+					bulkMoveToParts.push(model);
+					bulkMoveToCFrames.push(renderCFrame);
+				} else if (lastVisible) {
+					visibleModels.delete(entity);
+
+					bulkMoveToParts.push(model);
+					bulkMoveToCFrames.push(CACHE_CFRAME);
+				}
 			}
 
 			if (bulkMoveToParts.size() > 0)
