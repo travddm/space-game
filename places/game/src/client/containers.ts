@@ -8,12 +8,14 @@ modelContainer.Name = "Models";
 modelContainer.Archivable = false;
 modelContainer.Parent = Workspace;
 
-export const nametagContainer = new Instance("Folder");
-nametagContainer.Name = "Nametags";
-nametagContainer.Archivable = false;
-nametagContainer.Parent = playerGui;
-
 export const vfxContainer = new Instance("Folder");
 vfxContainer.Name = "VFX";
 vfxContainer.Archivable = false;
 vfxContainer.Parent = Workspace;
+
+export const nametagContainer = new Instance("ScreenGui");
+nametagContainer.Name = "Nametags";
+nametagContainer.Archivable = false;
+nametagContainer.ResetOnSpawn = false;
+nametagContainer.IgnoreGuiInset = true;
+nametagContainer.Parent = playerGui;
