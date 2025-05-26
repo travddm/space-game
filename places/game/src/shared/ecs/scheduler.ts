@@ -30,6 +30,10 @@ export function getScheduler() {
 				scheduler,
 			},
 		});
+
+		if (game.CreatorType === Enum.CreatorType.User)
+			jabby.set_check_function((player) => player.UserId === game.CreatorId);
+		else jabby.set_check_function((player) => player.GetRankInGroup(game.CreatorId) === 255);
 	}
 
 	return scheduler;
