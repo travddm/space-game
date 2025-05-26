@@ -18,4 +18,5 @@ nametagContainer.Name = "Nametags";
 nametagContainer.Archivable = false;
 nametagContainer.ResetOnSpawn = false;
 nametagContainer.IgnoreGuiInset = true;
+nametagContainer.ClipToDeviceSafeArea = false;
 nametagContainer.Parent = playerGui;
