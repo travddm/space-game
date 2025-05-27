@@ -5,6 +5,11 @@ import { log } from "common/shared/log";
 const entityMap = new Map<number, Entity>();
 const entityIdMap = new Map<Entity, number>();
 const entityIds = new Array<number>();
+const localEntities = new Array<Entity>();
+
+export function trackLocalEntity(entity: Entity) {
+	if (!localEntities.includes(entity)) localEntities.push(entity);
+}
 
 export function trackEntity(entityId: number, entity: Entity) {
 	if (entityMap.get(entityId) !== undefined) log.error(`Entity ${entityId} already exists!`);
@@ -12,6 +17,12 @@ export function trackEntity(entityId: number, entity: Entity) {
 	entityMap.set(entityId, entity);
 	entityIdMap.set(entity, entityId);
 	entityIds.push(entityId);
+}
+
+export function untrackLocalEntity(entity: Entity) {
+	const idx = localEntities.indexOf(entity);
+
+	if (idx > -1) localEntities.unorderedRemove(idx);
 }
 
 export function untrackEntity(entityId: number) {
@@ -38,4 +49,8 @@ export function getEntityId(entity: Entity) {
 
 export function getEntityIds() {
 	return entityIds;
+}
+
+export function getLocalEntities() {
+	return localEntities;
 }

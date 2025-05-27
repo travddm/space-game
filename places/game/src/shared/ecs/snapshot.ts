@@ -1,7 +1,15 @@
 import { CachedQuery, Entity } from "@rbxts/jecs";
 
 import { AnyComponent, AnyComponentData, ComponentName, components } from "./components";
-import { getEntity, getEntityId, getEntityIds, trackEntity, untrackEntity } from "./entity";
+import {
+	getEntity,
+	getEntityId,
+	getEntityIds,
+	getLocalEntities,
+	trackEntity,
+	untrackEntity,
+	untrackLocalEntity,
+} from "./entity";
 import { SerializableEntities, SerializableEntity } from "./serializers";
 import { world } from "./world";
 
@@ -14,6 +22,7 @@ for (const [componentName, component] of pairs(components)) {
 export function getSerializableEntities(): SerializableEntities {
 	const snapshotEntities = new Array<SerializableEntity>();
 	const addedEntityComponents = new Map<Entity, AnyComponentData[]>();
+	const localEntities = getLocalEntities();
 
 	for (const [componentName, query] of componentQueries) {
 		for (const [entity, componentData] of query) {
@@ -40,6 +49,27 @@ export function getSerializableEntities(): SerializableEntities {
 					snapshotEntities.push(serializableEntity);
 					addedEntityComponents.set(entity, serializableComponents);
 				}
+			} else if (localEntities.includes(entity)) {
+				const serializableComponent = {
+					name: componentName,
+					data: componentData,
+				} as AnyComponentData;
+
+				let serializableComponents = addedEntityComponents.get(entity);
+
+				if (serializableComponents) {
+					serializableComponents.push(serializableComponent);
+				} else {
+					serializableComponents = [serializableComponent];
+
+					const serializableEntity = {
+						id: -entity,
+						components: serializableComponents,
+					};
+
+					snapshotEntities.push(serializableEntity);
+					addedEntityComponents.set(entity, serializableComponents);
+				}
 			}
 		}
 	}
@@ -47,17 +77,30 @@ export function getSerializableEntities(): SerializableEntities {
 	return snapshotEntities;
 }
 
-export function applySerializableEntities(entities: SerializableEntities) {
+export function applySerializableEntities(entities: SerializableEntities, overwrite: boolean) {
 	const foundEntityIds = new Set<number>();
+	const foundLocalEntities = new Set<Entity>();
 
 	for (const serializableEntity of entities) {
 		const entityId = serializableEntity.id;
-		let entity = getEntity(entityId);
+		let entity: Entity;
 
-		if (entity === undefined) {
-			entity = world.entity();
+		if (overwrite || entityId > 0) {
+			let e = getEntity(entityId);
 
-			trackEntity(entityId, entity);
+			if (e === undefined) {
+				e = world.entity();
+
+				trackEntity(entityId, e);
+			}
+
+			entity = e;
+
+			foundEntityIds.add(entityId);
+		} else {
+			entity = -entityId as Entity;
+
+			foundLocalEntities.add(entity);
 		}
 
 		for (const serializableComponent of serializableEntity.components) {
@@ -65,8 +108,6 @@ export function applySerializableEntities(entities: SerializableEntities) {
 
 			world.set(entity, component, serializableComponent.data);
 		}
-
-		foundEntityIds.add(entityId);
 	}
 
 	for (const entityId of getEntityIds())
@@ -74,5 +115,11 @@ export function applySerializableEntities(entities: SerializableEntities) {
 			const entity = untrackEntity(entityId);
 
 			if (entity !== undefined) world.delete(entity);
+		}
+
+	for (const entity of getLocalEntities())
+		if (overwrite || !foundLocalEntities.has(entity)) {
+			untrackLocalEntity(entity);
+			world.delete(entity);
 		}
 }
