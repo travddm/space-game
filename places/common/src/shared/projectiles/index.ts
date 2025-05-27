@@ -5,6 +5,6 @@ export const projectileTypes = {
 };
 
 export type ProjectileTypes = typeof projectileTypes;
-export type ProjectileId = keyof ProjectileTypes;
+export type ProjectileTypeId = keyof ProjectileTypes;
 
 export { ProjectileType } from "./projectile-type";

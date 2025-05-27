@@ -1,9 +1,9 @@
-import { ProjectileId } from "../projectiles";
+import { ProjectileTypeId } from "../projectiles";
 
 export interface WeaponType {
 	cooldown: number;
 
-	projectileTypeId: ProjectileId;
+	projectileTypeId: ProjectileTypeId;
 	projectileSpeed: number;
 	projectileRange: number;
 }
