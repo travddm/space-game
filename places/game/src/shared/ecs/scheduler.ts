@@ -1,3 +1,5 @@
+import { RunService } from "@rbxts/services";
+
 import jabby from "@rbxts/jabby";
 import { Scheduler } from "@rbxts/jabby/out/jabby/modules/types";
 
@@ -31,7 +33,8 @@ export function getScheduler() {
 			},
 		});
 
-		if (game.CreatorType === Enum.CreatorType.User)
+		if (RunService.IsStudio()) jabby.set_check_function(() => true);
+		else if (game.CreatorType === Enum.CreatorType.User)
 			jabby.set_check_function((player) => player.UserId === game.CreatorId);
 		else jabby.set_check_function((player) => player.GetRankInGroup(game.CreatorId) === 255);
 	}
