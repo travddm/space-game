@@ -35,7 +35,7 @@ export const addEntitiesSystem = createSystem({
 					} else {
 						// server
 
-						entity = world.entity();
+						entity = addEntity();
 
 						data.serverEntityId = entity;
 					}

@@ -12,55 +12,49 @@ const entityIds = new Array<number>();
 
 const isServer = RunService.IsServer();
 
-export function addEntity(entityId: number) {
-	if (isServer) log.error("Do not call addEntity(entityId) on the server! Use world.entity() instead.", 1);
-	if (entityMap.get(entityId) !== undefined) log.error(`Entity ${entityId} already exists!`);
+export function addEntity(entityId?: number) {
+	if (entityId === undefined) {
+		const entity = world.entity();
+		entityMap.set(entity, entity);
+		entityIdMap.set(entity, entity);
+		entityIds.push(entity);
 
-	const entity = world.entity();
-	entityMap.set(entityId, entity);
-	entityIdMap.set(entity, entityId);
-	entityIds.push(entityId);
-
-	return entity;
-}
-
-export function removeEntity(entityId: number) {
-	if (isServer) {
-		const entity = entityId as Entity;
-
-		if (world.has(entity)) {
-			world.delete(entity);
-
-			return true;
-		} else return false;
+		return entity;
 	} else {
-		const entity = entityMap.get(entityId);
+		if (entityMap.get(entityId) !== undefined) return log.error(`Entity ${entityId} already exists!`);
 
-		if (entity !== undefined) {
-			world.delete(entity);
-			entityMap.delete(entityId);
-			entityIdMap.delete(entity);
+		const entity = world.entity();
+		entityMap.set(entityId, entity);
+		entityIdMap.set(entity, entityId);
+		entityIds.push(entityId);
 
-			const idx = entityIds.indexOf(entityId);
-			if (idx > -1) entityIds.unorderedRemove(idx);
-
-			return true;
-		} else return false;
+		return entity;
 	}
 }
 
+export function removeEntity(entityId: number) {
+	const entity = entityMap.get(entityId);
+
+	if (entity !== undefined) {
+		world.delete(entity);
+		entityMap.delete(entityId);
+		entityIdMap.delete(entity);
+
+		const idx = entityIds.indexOf(entityId);
+		if (idx > -1) entityIds.unorderedRemove(idx);
+
+		return true;
+	} else return false;
+}
+
 export function getEntity(entityId: number) {
-	if (isServer) return entityId as Entity | undefined;
-	else return entityMap.get(entityId);
+	return entityMap.get(entityId);
 }
 
 export function getEntityId(entity: Entity) {
-	if (isServer) return entity;
-	else return entityIdMap.get(entity);
+	return entityIdMap.get(entity);
 }
 
 export function getEntityIds() {
-	if (isServer) log.error("Do not call getEntityIds() on the server! Use world.query(...) instead.", 1);
-
 	return entityIds;
 }
