@@ -5,6 +5,6 @@ export const weaponTypes = {
 };
 
 export type WeaponTypes = typeof weaponTypes;
-export type WeaponId = keyof WeaponTypes;
+export type WeaponTypeId = keyof WeaponTypes;
 
 export { WeaponType } from "./weapon-type";
