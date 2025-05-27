@@ -45,7 +45,7 @@ export function startInputManager() {
 	}
 
 	function bufferInput(inputObject: InputObject, gameProcessed: boolean) {
-		if (gameProcessed) return;
+		if (gameProcessed && inputObject.UserInputState !== Enum.UserInputState.End) return;
 
 		const mappedInput = inputActionMap.get(inputObject.UserInputType) ?? inputActionMap.get(inputObject.KeyCode);
 
