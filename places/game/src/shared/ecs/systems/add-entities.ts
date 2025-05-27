@@ -1,7 +1,7 @@
 import { Entity } from "@rbxts/jecs";
 
 import { components } from "../components";
-import { addEntity, getEntity } from "../entity";
+import { getEntity, trackEntity } from "../entity";
 import { SystemCallbackType, createSystem } from "../system";
 import { world } from "../world";
 
@@ -31,11 +31,17 @@ export const addEntitiesSystem = createSystem({
 							entity = e;
 							for (const [componentName, component] of pairs(components))
 								if (entityComponents[componentName] === undefined) world.remove(entity, component);
-						} else entity = addEntity(entityId);
+						} else {
+							entity = world.entity();
+
+							trackEntity(entityId, entity);
+						}
 					} else {
 						// server
 
-						entity = addEntity();
+						entity = world.entity();
+
+						trackEntity(entity, entity);
 
 						data.serverEntityId = entity;
 					}

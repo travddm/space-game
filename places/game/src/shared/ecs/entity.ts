@@ -1,50 +1,31 @@
-import { RunService } from "@rbxts/services";
-
 import { Entity } from "@rbxts/jecs";
 
 import { log } from "common/shared/log";
-
-import { world } from "./world";
 
 const entityMap = new Map<number, Entity>();
 const entityIdMap = new Map<Entity, number>();
 const entityIds = new Array<number>();
 
-const isServer = RunService.IsServer();
+export function trackEntity(entityId: number, entity: Entity) {
+	if (entityMap.get(entityId) !== undefined) log.error(`Entity ${entityId} already exists!`);
 
-export function addEntity(entityId?: number) {
-	if (entityId === undefined) {
-		const entity = world.entity();
-		entityMap.set(entity, entity);
-		entityIdMap.set(entity, entity);
-		entityIds.push(entity);
-
-		return entity;
-	} else {
-		if (entityMap.get(entityId) !== undefined) return log.error(`Entity ${entityId} already exists!`);
-
-		const entity = world.entity();
-		entityMap.set(entityId, entity);
-		entityIdMap.set(entity, entityId);
-		entityIds.push(entityId);
-
-		return entity;
-	}
+	entityMap.set(entityId, entity);
+	entityIdMap.set(entity, entityId);
+	entityIds.push(entityId);
 }
 
-export function removeEntity(entityId: number) {
+export function untrackEntity(entityId: number) {
 	const entity = entityMap.get(entityId);
 
 	if (entity !== undefined) {
-		world.delete(entity);
 		entityMap.delete(entityId);
 		entityIdMap.delete(entity);
 
 		const idx = entityIds.indexOf(entityId);
 		if (idx > -1) entityIds.unorderedRemove(idx);
 
-		return true;
-	} else return false;
+		return entity;
+	}
 }
 
 export function getEntity(entityId: number) {

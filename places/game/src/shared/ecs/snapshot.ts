@@ -1,7 +1,7 @@
 import { CachedQuery, Entity } from "@rbxts/jecs";
 
 import { AnyComponent, AnyComponentData, ComponentName, components } from "./components";
-import { addEntity, getEntity, getEntityId, getEntityIds, removeEntity } from "./entity";
+import { getEntity, getEntityId, getEntityIds, trackEntity, untrackEntity } from "./entity";
 import { SerializableEntities, SerializableEntity } from "./serializers";
 import { world } from "./world";
 
@@ -54,7 +54,11 @@ export function applySerializableEntities(entities: SerializableEntities) {
 		const entityId = serializableEntity.id;
 		let entity = getEntity(entityId);
 
-		if (entity === undefined) entity = addEntity(entityId);
+		if (entity === undefined) {
+			entity = world.entity();
+
+			trackEntity(entityId, entity);
+		}
 
 		for (const serializableComponent of serializableEntity.components) {
 			const component = components[serializableComponent.name];
@@ -65,5 +69,10 @@ export function applySerializableEntities(entities: SerializableEntities) {
 		foundEntityIds.add(entityId);
 	}
 
-	for (const entityId of getEntityIds()) if (!foundEntityIds.has(entityId)) removeEntity(entityId);
+	for (const entityId of getEntityIds())
+		if (!foundEntityIds.has(entityId)) {
+			const entity = untrackEntity(entityId);
+
+			if (entity !== undefined) world.delete(entity);
+		}
 }

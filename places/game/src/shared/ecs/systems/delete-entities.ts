@@ -1,5 +1,6 @@
-import { removeEntity } from "../entity";
+import { untrackEntity } from "../entity";
 import { SystemCallbackType, createSystem } from "../system";
+import { world } from "../world";
 import { addEntitiesSystem } from "./add-entities";
 
 export const deleteEntitiesSystem = createSystem({
@@ -15,7 +16,9 @@ export const deleteEntitiesSystem = createSystem({
 
 					if (playerId !== "server") continue;
 
-					removeEntity(action.data.entityId);
+					const entity = untrackEntity(action.data.entityId);
+
+					if (entity !== undefined) world.delete(entity);
 				}
 		},
 	},
