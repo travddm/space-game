@@ -2,13 +2,13 @@ import { CachedQuery, Entity } from "@rbxts/jecs";
 
 import { AnyComponent, AnyComponentData, ComponentName, components } from "./components";
 import {
+	deleteLocalEntity,
 	getEntity,
 	getEntityId,
 	getEntityIds,
 	getLocalEntities,
 	trackEntity,
 	untrackEntity,
-	untrackLocalEntity,
 } from "./entity";
 import { SerializableEntities, SerializableEntity } from "./serializers";
 import { world } from "./world";
@@ -79,29 +79,21 @@ export function getSerializableEntities(): SerializableEntities {
 
 export function applySerializableEntities(entities: SerializableEntities, overwrite: boolean) {
 	const foundEntityIds = new Set<number>();
-	const foundLocalEntities = new Set<Entity>();
 
 	for (const serializableEntity of entities) {
 		const entityId = serializableEntity.id;
-		let entity: Entity;
 
-		if (overwrite || entityId > 0) {
-			let e = getEntity(entityId);
+		if (entityId < 0) continue;
 
-			if (e === undefined) {
-				e = world.entity();
+		let entity = getEntity(entityId);
 
-				trackEntity(entityId, e);
-			}
+		if (entity === undefined) {
+			entity = world.entity();
 
-			entity = e;
-
-			foundEntityIds.add(entityId);
-		} else {
-			entity = -entityId as Entity;
-
-			foundLocalEntities.add(entity);
+			trackEntity(entityId, entity);
 		}
+
+		foundEntityIds.add(entityId);
 
 		for (const serializableComponent of serializableEntity.components) {
 			const component = components[serializableComponent.name];
@@ -117,9 +109,5 @@ export function applySerializableEntities(entities: SerializableEntities, overwr
 			if (entity !== undefined) world.delete(entity);
 		}
 
-	for (const entity of getLocalEntities())
-		if (overwrite || !foundLocalEntities.has(entity)) {
-			untrackLocalEntity(entity);
-			world.delete(entity);
-		}
+	if (overwrite) for (const entity of getLocalEntities()) deleteLocalEntity(entity);
 }
