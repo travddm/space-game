@@ -35,7 +35,7 @@ export const renderModelsSystem = createSystem({
 			for (const entity of modelMonitor.added()) {
 				const [model, transform] = world.get(entity, components.model, components.transform);
 
-				if (model !== undefined && transform) {
+				if (model && transform) {
 					const renderModel = new Instance("Part");
 					renderModel.Name = tostring(entity);
 					renderModel.Anchored = true;
