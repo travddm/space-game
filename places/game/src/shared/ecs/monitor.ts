@@ -27,8 +27,11 @@ export function monitor(component: Entity) {
 	world.set(component, OnRemove, remove);
 
 	function unhook() {
-		world.remove(component, OnAdd);
-		world.remove(component, OnRemove);
+		if (onAdd) world.set(component, OnAdd, onAdd);
+		else world.remove(component, OnAdd);
+
+		if (onRemove) world.set(component, OnRemove, onRemove);
+		else world.remove(component, OnRemove);
 	}
 
 	return {
