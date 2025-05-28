@@ -17,7 +17,6 @@ function onComponentChanged(entity: Entity) {
 	else world.remove(entity, localComponent);
 }
 
-world.set(components.player, Name, "player");
 world.set(components.player, OnAdd, onComponentChanged);
 world.set(components.player, OnSet, onComponentChanged);
 world.set(components.player, OnRemove, onComponentChanged);

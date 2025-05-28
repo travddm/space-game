@@ -8,4 +8,4 @@ export interface NametagRender {
 
 export const nametagRenderComponent = world.component<NametagRender>();
 
-world.set(nametagRenderComponent, Name, "nametag-render");
+world.set(nametagRenderComponent, Name, "nametagRender");

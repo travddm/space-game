@@ -12,4 +12,4 @@ export interface ModelRender {
 
 export const modelRenderComponent = world.component<ModelRender>();
 
-world.set(modelRenderComponent, Name, "model-render");
+world.set(modelRenderComponent, Name, "modelRender");
