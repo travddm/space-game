@@ -84,7 +84,7 @@ export function startScheduler(config: ClientSchedulerConfig) {
 				const lastFrame = lastSnapshot.frame;
 
 				// update entity/component data
-				applySerializableEntities(lastSnapshot.entities);
+				applySerializableEntities(lastSnapshot.entities, false);
 
 				// replay actions
 				for (const system of registeredSystems[SystemCallbackType.OnFixedUpdate])
@@ -121,7 +121,7 @@ export function startScheduler(config: ClientSchedulerConfig) {
 				}
 
 				// update entity/component data if necessary
-				if (snapshotEntities) applySerializableEntities(snapshotEntities);
+				if (snapshotEntities) applySerializableEntities(snapshotEntities, true);
 
 				// play actions
 				for (const system of registeredSystems[SystemCallbackType.OnFixedUpdate])

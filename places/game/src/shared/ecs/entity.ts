@@ -56,6 +56,7 @@ export function deleteLocalEntity(entity: Entity) {
 
 	const localEntityData = localEntityDatas.get(entity);
 	const localEntityIdx = localEntities.indexOf(entity);
+	const entityId = getEntityId(entity);
 
 	if (localEntityData) {
 		localEntityDatas.delete(entity);
@@ -75,6 +76,8 @@ export function deleteLocalEntity(entity: Entity) {
 	}
 
 	if (localEntityIdx > -1) localEntities.unorderedRemove(localEntityIdx);
+
+	if (entityId !== undefined) untrackEntity(entityId);
 }
 
 export function trackEntity(entityId: number, entity: Entity) {

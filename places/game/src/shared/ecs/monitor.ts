@@ -12,16 +12,32 @@ export function monitor(component: Entity) {
 	const add = onAdd
 		? (entity: Entity) => {
 				onAdd(entity);
-				addStorage.push(entity);
+				addToStorage(entity);
 			}
-		: (entity: Entity) => addStorage.push(entity);
+		: (entity: Entity) => addToStorage(entity);
 
 	const remove = onRemove
 		? (entity: Entity) => {
 				onRemove(entity);
-				removeStorage.push(entity);
+				removeFromStorage(entity);
 			}
-		: (entity: Entity) => removeStorage.push(entity);
+		: (entity: Entity) => removeFromStorage(entity);
+
+	function addToStorage(entity: Entity) {
+		const removeIdx = removeStorage.indexOf(entity);
+
+		if (removeIdx > -1) {
+			removeStorage.unorderedRemove(removeIdx);
+		} else addStorage.push(entity);
+	}
+
+	function removeFromStorage(entity: Entity) {
+		const addIdx = addStorage.indexOf(entity);
+
+		if (addIdx > -1) {
+			addStorage.unorderedRemove(addIdx);
+		} else removeStorage.push(entity);
+	}
 
 	world.set(component, OnAdd, add);
 	world.set(component, OnRemove, remove);

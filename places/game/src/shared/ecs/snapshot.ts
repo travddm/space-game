@@ -77,7 +77,7 @@ export function getSerializableEntities(): SerializableEntities {
 	return snapshotEntities;
 }
 
-export function applySerializableEntities(entities: SerializableEntities) {
+export function applySerializableEntities(entities: SerializableEntities, overwriteLocal: boolean) {
 	const foundEntityIds = new Set<number>();
 
 	for (const serializableEntity of entities) {
@@ -108,5 +108,6 @@ export function applySerializableEntities(entities: SerializableEntities) {
 			if (entity !== undefined) world.delete(entity);
 		}
 
-	for (const entity of getLocalEntities()) if (!foundEntityIds.has(-entity)) deleteLocalEntity(entity);
+	if (overwriteLocal)
+		for (const entity of getLocalEntities()) if (!foundEntityIds.has(-entity)) deleteLocalEntity(entity);
 }
