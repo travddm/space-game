@@ -1,0 +1,17 @@
+version = 1
+
+[inputs.assets."assets/images/projectiles/laser-bullet.png"]
+hash = "57365c9553c6afeb52e18ecf7fbd8a66c6d6317c74053175601e0600dcb95487"
+asset_id = 91850083493437
+
+[inputs.assets."assets/images/ui/background-round.png"]
+hash = "49abad8dd6ecef0b47c261912c56a45de5c824f6249052d1911e25993c1d42b7"
+asset_id = 103526380170720
+
+[inputs.assets."assets/images/ui/border-round.png"]
+hash = "d4d52620508057a47a95bf2faca24acd6db09ba8daa1b50bfa819161977452e1"
+asset_id = 124362079277128
+
+[inputs.assets."assets/images/ui/border-single.png"]
+hash = "4fd32d9cfac6f4ce0254ee5df7c9f70014f7d284ee72e15a8cea486a3f0bb7af"
+asset_id = 87524602350377

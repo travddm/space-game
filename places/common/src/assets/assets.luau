@@ -1,8 +1,8 @@
 local assets = {
-	["images/projectiles/laser-bullet.png"] = "rbxasset://.asphalt-space-game/images/projectiles/laser-bullet.png",
-	["images/ui/background-round.png"] = "rbxasset://.asphalt-space-game/images/ui/background-round.png",
-	["images/ui/border-round.png"] = "rbxasset://.asphalt-space-game/images/ui/border-round.png",
-	["images/ui/border-single.png"] = "rbxasset://.asphalt-space-game/images/ui/border-single.png",
+	["images/projectiles/laser-bullet.png"] = "rbxassetid://91850083493437",
+	["images/ui/background-round.png"] = "rbxassetid://103526380170720",
+	["images/ui/border-round.png"] = "rbxassetid://124362079277128",
+	["images/ui/border-single.png"] = "rbxassetid://87524602350377",
 }
 
 return assets
