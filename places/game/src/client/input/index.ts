@@ -1,6 +1,6 @@
 import { UserInputService } from "@rbxts/services";
 
-import { log } from "common/shared/log";
+import { log } from "common/log";
 
 import { Input, InputName, defaultInputConfig } from "shared/input";
 

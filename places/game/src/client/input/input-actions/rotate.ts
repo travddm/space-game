@@ -1,6 +1,6 @@
 import { Workspace } from "@rbxts/services";
 
-import { getAngleDifferenceY, getIntersectionY } from "common/shared/util";
+import { getAngleDifferenceY, getIntersectionY } from "common/util";
 
 import { components, getEntityId, queueAction, world } from "shared/ecs";
 import { InputName } from "shared/input";

@@ -1,6 +1,7 @@
 import { InferActionData } from "../action";
 import { addEntity } from "./add-entity";
 import { deleteEntity } from "./delete-entity";
+import { firePrimary } from "./fire-primary";
 import { moveEntity } from "./move-entity";
 import { rotateEntity } from "./rotate-entity";
 
@@ -9,6 +10,8 @@ export const actions = {
 	deleteEntity,
 	moveEntity,
 	rotateEntity,
+
+	firePrimary,
 };
 
 export const predictableActions = new Set<ActionName>(["moveEntity", "rotateEntity"]);

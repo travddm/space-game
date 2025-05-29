@@ -1,4 +1,4 @@
-import { log } from "common/shared/log";
+import { log } from "common/log";
 
 import { fixedTimeStep, maxTimeStep } from "shared/constants";
 

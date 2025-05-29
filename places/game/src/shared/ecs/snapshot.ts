@@ -77,15 +77,14 @@ export function getSerializableEntities(): SerializableEntities {
 	return snapshotEntities;
 }
 
-export function applySerializableEntities(entities: SerializableEntities, overwrite: boolean) {
+export function applySerializableEntities(entities: SerializableEntities) {
 	const foundEntityIds = new Set<number>();
 
 	for (const serializableEntity of entities) {
 		const entityId = serializableEntity.id;
+		const isLocal = entityId < 0;
 
-		if (entityId < 0) continue;
-
-		let entity = getEntity(entityId);
+		let entity = isLocal ? (-entityId as Entity) : getEntity(entityId);
 
 		if (entity === undefined) {
 			entity = world.entity();
@@ -109,5 +108,5 @@ export function applySerializableEntities(entities: SerializableEntities, overwr
 			if (entity !== undefined) world.delete(entity);
 		}
 
-	if (overwrite) for (const entity of getLocalEntities()) deleteLocalEntity(entity);
+	for (const entity of getLocalEntities()) if (!foundEntityIds.has(-entity)) deleteLocalEntity(entity);
 }

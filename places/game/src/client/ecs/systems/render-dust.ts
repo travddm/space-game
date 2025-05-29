@@ -1,6 +1,6 @@
 import { Workspace } from "@rbxts/services";
 
-import { getIntersectionY } from "common/shared/util";
+import { getIntersectionY } from "common/util";
 
 import { SystemCallbackType, createSystem } from "shared/ecs";
 

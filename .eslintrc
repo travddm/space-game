@@ -9,7 +9,7 @@
 	},
 	"ignorePatterns": [
 		"/out",
-		"/places/common/src/shared/assets/assets.d.ts"
+		"/places/common/src/assets/assets.d.ts"
 	],
 	"plugins": [
 		"@typescript-eslint",

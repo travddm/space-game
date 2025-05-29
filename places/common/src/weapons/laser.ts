@@ -4,6 +4,6 @@ export const laser: WeaponType = {
 	cooldown: 0.5,
 
 	projectileTypeId: "laserRed",
-	projectileSpeed: 40,
+	projectileSpeed: 20,
 	projectileRange: 100,
 };

@@ -25,6 +25,11 @@ export function startPlayerManager() {
 				model: {
 					modelId: "todo",
 				},
+				weapons: {
+					primaryTypeId: "laser",
+					primaryFiring: false,
+					primaryFrame: 0,
+				},
 			},
 		});
 	}

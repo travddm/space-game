@@ -4,7 +4,9 @@ import { modelComponent } from "./model";
 import { movableComponent } from "./movable";
 import { nametagComponent } from "./nametag";
 import { playerComponent } from "./player";
+import { projectileComponent } from "./projectile";
 import { transformComponent } from "./transform";
+import { weaponsComponent } from "./weapons";
 
 export const components = {
 	transform: transformComponent,
@@ -12,6 +14,8 @@ export const components = {
 	player: playerComponent,
 	model: modelComponent,
 	nametag: nametagComponent,
+	weapons: weaponsComponent,
+	projectile: projectileComponent,
 };
 
 export type Components = typeof components;

@@ -6,7 +6,7 @@
         "clean": "find places -type d -name 'out' -exec rm -rf {} + && find places -type f -name 'flamework.build' -exec rm -f {} +",
         "sync:assets": "asphalt sync && npm run fix:assets",
         "sync-studio:assets": "asphalt sync -t studio && npm run fix:assets",
-        "fix:assets": "find places/common/src/shared/assets -type f -exec sed -i 's/\\\\\\\\/\\//g' {} +",
+        "fix:assets": "find places/common/src/assets -type f -exec sed -i 's/\\\\\\\\/\\//g' {} +",
         "compile:game": "rbxtsc -p places/game",
         "watch:game": "rbxtsc -w --verbose -p places/game",
         "build:game": "rojo build -o places/game/build.rbxl places/game",

@@ -9,4 +9,4 @@ strip_extensions = false
 
 [inputs.assets]
 path = "assets/**/**"
-output_path = "places/common/src/shared/assets"
+output_path = "places/common/src/assets"

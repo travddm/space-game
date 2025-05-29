@@ -8,9 +8,6 @@
 		"$className": "DataModel",
 		"ServerStorage": {
 			"$className": "ServerStorage",
-			"common-server": {
-				"$path": "out/common/src/server"
-			},
             "server": {
                 "$path": "out/menu/src/server"
             }
@@ -39,10 +36,7 @@
 				}
 			},
 			"common-shared": {
-				"$path": "out/common/src/shared"
-			},
-			"common-client": {
-				"$path": "out/common/src/client"
+				"$path": "out/common/src"
 			},
             "shared": {
                 "$path": "out/menu/src/shared"

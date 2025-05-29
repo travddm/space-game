@@ -1,4 +1,4 @@
-import { getAngleBetweenVectors, rotateVectorY } from "common/shared/util";
+import { getAngleBetweenVectors, rotateVectorY } from "common/util";
 
 import { components } from "../components";
 import { getEntity } from "../entity";
