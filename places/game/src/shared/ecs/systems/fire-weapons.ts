@@ -52,7 +52,7 @@ export const fireWeaponsSystem = createSystem({
 					world.set(projectileEntity, components.movable, {
 						moveDirection: Vector3.zAxis.mul(-1),
 						moveSpeed: speed,
-						moveVelocity: transform.LookVector.mul(speed).add(movable?.moveVelocity ?? Vector3.zero),
+						moveVelocity: transform.LookVector.mul(speed),
 						rotateDirection: Vector3.zero,
 						rotateSpeed: 0,
 					});
