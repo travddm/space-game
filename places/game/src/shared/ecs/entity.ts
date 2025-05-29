@@ -55,8 +55,11 @@ export function deleteLocalEntity(entity: Entity) {
 	world.delete(entity);
 
 	const localEntityData = localEntityDatas.get(entity);
+	const localEntityIdx = localEntities.indexOf(entity);
 
 	if (localEntityData) {
+		localEntityDatas.delete(entity);
+
 		const entityType = localEntityData.entityType;
 		const frameCreated = localEntityData.frameCreated;
 		const localEntityId = localEntityData.localEntityId;
@@ -70,6 +73,8 @@ export function deleteLocalEntity(entity: Entity) {
 			if (localEntityFrame.isEmpty()) localEntityFrames.delete(frameCreated);
 		}
 	}
+
+	if (localEntityIdx > -1) localEntities.unorderedRemove(localEntityIdx);
 }
 
 export function trackEntity(entityId: number, entity: Entity) {
