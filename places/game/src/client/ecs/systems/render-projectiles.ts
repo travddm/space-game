@@ -45,14 +45,9 @@ export const renderProjectilesSystem = createSystem({
 
 			// add render data
 			for (const entity of projectileMonitor.added()) {
-				const [projectile, transform, movable] = world.get(
-					entity,
-					components.projectile,
-					components.transform,
-					components.movable,
-				);
+				const [projectile, transform] = world.get(entity, components.projectile, components.transform);
 
-				if (projectile && transform && movable) {
+				if (projectile && transform) {
 					const rotatedTransform = transform.mul(PROJECTILE_ROTATION);
 
 					world.set(entity, clientComponents.projectileRender, {

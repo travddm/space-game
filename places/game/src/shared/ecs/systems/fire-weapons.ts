@@ -4,13 +4,13 @@ import { components } from "../components";
 import { addLocalEntity, getEntity } from "../entity";
 import { SystemCallbackType, createSystem } from "../system";
 import { world } from "../world";
-import { moveEntitiesSystem } from "./move-entities";
+import { moveProjectilesSystem } from "./move-projectiles";
 
 const weaponsEntities = world.query(components.transform, components.weapons).cached();
 
 export const fireWeaponsSystem = createSystem({
 	name: "fire-weapons",
-	dependencies: [moveEntitiesSystem],
+	dependencies: [moveProjectilesSystem],
 	callbacks: {
 		[SystemCallbackType.OnFixedUpdate]: (deltaTime, frame, actions) => {
 			const firePrimaryActions = actions.firePrimary;
@@ -48,17 +48,13 @@ export const fireWeaponsSystem = createSystem({
 
 					const projectileEntity = addLocalEntity("projectile", frame, localEntityId);
 
+					const velocity = transform.LookVector.mul(speed).add(movable?.moveVelocity ?? Vector3.zero);
+
 					world.set(projectileEntity, components.transform, transform);
-					world.set(projectileEntity, components.movable, {
-						moveDirection: Vector3.zAxis.mul(-1),
-						moveSpeed: speed,
-						moveVelocity: transform.LookVector.mul(speed),
-						rotateDirection: Vector3.zero,
-						rotateSpeed: 0,
-					});
 					world.set(projectileEntity, components.projectile, {
 						typeId: weapon.projectileTypeId,
 						cleanupFrame: frame + math.floor(weapon.projectileRange / speed / deltaTime),
+						velocity,
 					});
 
 					if (player !== undefined) world.set(projectileEntity, components.player, player);
